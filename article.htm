@@ -1,0 +1,1451 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon-precomposed" sizes="57x57" href="http://www.qiyipic.com/common/fix/h5_white_images/desktop_logo-57.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://www.qiyipic.com/common/fix/h5_white_images/desktop_logo-72.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://www.qiyipic.com/common/fix/h5_white_images/desktop_logo-114.png"/>                    <title>爱奇艺视频触屏版自适应手机wap视频网站模板下载</title>
+                <meta name="keywords" content="社会大学是座整容院引爆照 今昔对比判若两人" />
+                <meta name="description" content="大学是座整容院引爆照 今昔对比判若两人:毕业季临近，网上近日掀起一个“大学是座整容院”的热门话题，引得大家纷纷晒出自己入学前和毕业时的对比照，感慨四年岁月变迁。有图有真相，不信一一看来。" />
+                <meta name="appid" content="2104633" />
+            <link type="text/css" href="css/h5_white.css" rel="stylesheet"/>        <script type="text/javascript" src="js/lib.1.0.1.min.js?sea1.2.min.js"></script>        
+        <!--script src="js/h5lib.removesea.1.0.1.js"></script-->
+        <script type="text/javascript">
+            window.__page_start = new Date().getTime();
+            // 移动端分享视频时针对大于21亿4700万的tvid进行了处理，此处进行兼容；
+// 当发现是经过转换过的tvid时，计算真实tvid并控制页面跳转到正确的tvid播放页。
+// 2014-05-27@caozhonghong
+(function(){
+function getRealID(id){
+    if(id % 100 == 99 && id > 200000099 && id < 2000000099) {
+        return  (id - 99 - 2000000 * 100 + 2147483647 + 62);
+    }else{
+       return id;
+    }
+}
+
+var fTvid = location.href.match(/\btvid=([^=\?#&]*)\b/i);
+if(fTvid){
+    var rTvid = getRealID(fTvid[1]);
+    if(fTvid[1] != rTvid) {
+        // 重定向到正确tvid播放页
+        location.href = location.href.replace(/\btvid=[^=\?#&]*\b/i, "tvid=" + rTvid);
+    }
+}
+})();            (function(console) {
+    var rules = {
+        level : 0, //['info', 'trace', 'warn', 'error', 'log']，2对应的是warn
+        types : {
+            'interface_failure_timeout' : {//接口超时出错
+                methods : 'random 0',
+                isGanglia : true
+            },
+            'interface_failure_param' : {//传入的参数出错
+                methods : 'random 0',
+                isGanglia : true
+            },
+            'interface_failure_internal' : {//内部错误，返回的接口数据不是想要的都可以发送这个
+                methods : 'random 5',
+                isGanglia : true
+            },
+            'interface_success' : {
+                methods : 'random 30',
+                isGanglia : true
+            },
+            'env' : {
+                methods : 'random 30'
+            },
+            'inc' : {
+                //暂时配置一个累加的字段,有些需求需要累加
+                methods : 'random 1',
+                isGanglia : true
+            },
+            'timer' : {//临时增加的，用来看时间消耗，这个以后会被profile替换
+                methods : 'random 30',
+                isGanglia : true
+            }
+        }
+    };
+
+    var getCookie = function(key) {
+        var value = null;
+        var reg = new RegExp("(^| )" + key + "=([^;]*)(;|\x24)"), result = reg.exec(document.cookie);
+        if (result) {
+            value = result[2] || "";
+        }
+        if ('string' == typeof value) {
+            value = decodeURIComponent(value);
+            return value;
+        }
+        return "";
+    }, setCookie = function(key, value, options) {
+        options = options || {};
+        value = encodeURIComponent(value);
+        var expires = options.expires;
+        if ('number' == typeof options.expires) {
+            expires = new Date();
+            expires.setTime(expires.getTime() + options.expires);
+        }
+
+        document.cookie = key + "=" + value + (options.path ? "; path=" + options.path : "") + ( expires ? "; expires=" + expires.toGMTString() : "") + (options.domain ? "; domain=" + options.domain : "") + (options.secure ? "; secure" : '');
+    };
+    var methods = {
+        all : function() {
+            return true;
+        },
+        random : function(percent) {
+            var randValue = getCookie('lograndvalue');
+            if (randValue === '') {
+                randValue = Math.random() * 100;
+                setCookie('lograndvalue', randValue, {
+                    expires : 7 * 24 * 3600 * 1000
+                });
+            }
+            return randValue < percent;
+        }
+    };
+    var jsonToQuery = function(json) {
+        var query = [];
+        (function f(json) {
+            for (var k in json) {
+                var v = '';
+                if ( typeof json[k] != 'object') {
+                    v = json[k];
+                } else {
+                    //这里不做递归调用了，提高效率
+                    //v = f.call(this, json[k]);
+                }
+                query.push(k + '=' + encodeURIComponent(v));
+            }
+        })(json);
+        return query.join('&');
+    };
+
+    ['info', 'trace', 'warn', 'error'].forEach(function(method, l) {
+       /* if (!console[method]) {
+            console[method] = function(rules) {
+                var types = rules.types, level = rules.level, r = null;
+                return l < level ? function() {
+                } : function() {
+                     var args = arguments[0];
+                     if(typeof args == 'object' && (r = types[args.t])) {
+                     //发送请求到后台
+                     var fluxMethod = args.methods ||  r.methods;
+                     var m = fluxMethod.split(' ');
+                     if(methods[m[0]].call(window, m.slice(1))) {
+                     var url = 'http://mt.t.iqiyi.com/h5/common',query = '';
+                     if(r.isGanglia) {
+                     var filterArr = ['interface_failure', 'inc'].filter(function(t) {
+                     return args.t.indexOf(t) != -1;
+                     });
+                     if(filterArr && filterArr.length) {
+                     query = 'inc='+args.name;
+                     }else {
+                     query = args.name + '=' + args.tm;
+                     args.tm = 'ms' + args.tm;//这里转换为字符串，防止被统计
+                     }
+                     query += '&';
+                     }
+                     query += jsonToQuery(args);
+                     url = url +'?' + query+'&rn=r'+(Math.random() + new Date().getTime());
+                     var img = new Image();
+                     img.src = url;
+                     }
+                     }else {
+                     }
+                };
+            }
+        }*/
+    });
+    console.track = (function() {//用来描述用户行为轨迹
+        var key = 'track';
+        return {
+            dot : function(msg) {
+                //feedback 打点
+                msg = new Date() + ':::' + msg;
+                try {
+                    var omsg = localStorage.getItem(key);
+                    var omsgArr = [];
+                    if (omsg && ( omsgArr = omsg.split('\n')).length > 1000) {
+                        omsgArr = omsgArr.slice(500);
+                    }
+                    omsgArr.push(msg);
+                    localStorage.setItem(key, omsgArr.join('\n'));
+                } catch(e) {
+
+                }
+            },
+            getTrackMsg : function() {
+                var msg = '';
+                try {
+                    msg = localStorage.getItem(key);
+                } catch(e) {
+                }
+                return msg;
+            },
+            clearTrackMsg : function() {
+                try {
+                    localStorage.setItem(key, '');
+                } catch(e) {
+                }
+
+            }
+        };
+    })();
+    ['time', 'timeEnd', 'profile', 'profileEnd'].forEach(function() {
+        //性能监控相关代码,这个暂时先不实现
+    });
+
+})(window.console);             window.Qiyi = window.Qiyi || {};
+window.Q = window.Qiyi;
+(function(Q){
+    Q.load = function(jobName, callback) {
+        seajs.use("http://static.iqiyi.com/js/html5/" + jobName, function(pagejob) {
+            if (pagejob && pagejob.addJobs) {
+                pagejob.addJobs();
+            }
+            if (pagejob && pagejob.start) {
+                pagejob.start();
+            }
+            if (callback) {
+                callback();
+            }
+        });
+    };
+    Q.PageInfo = Q.PageInfo || {};
+})(window.Q);
+
+            Q.PageInfo = Q.PageInfo || {};
+Q.PageInfo.debug = "true";
+Q.PageInfo.sample = "sample";            
+        </script>
+        <script type="text/javascript">
+            
+            Q.PageInfo = Q.PageInfo || {};
+            Q.PageInfo.cname = "";
+            Q.PageInfo.page = "play";
+            Q.PageInfo.weixinShareRseat = "508301_9";
+            Q.PageInfo.playInfo = {};
+            Q.PageInfo.promotionInfo = {};
+
+            Q.PageInfo.playInfo.tvid = "484701500";
+            Q.PageInfo.playInfo.qipuId = "484701500";
+            Q.PageInfo.playInfo.vid = "ba8283787f444fa54f9ddede8878d8b2";
+            Q.PageInfo.playInfo.aid = "484701500";
+            Q.PageInfo.playInfo.duration = "18";
+            Q.PageInfo.playInfo.isUGC = false;
+            Q.PageInfo.playInfo.publicLevel = ""*1;
+                                Q.PageInfo.playInfo.templateType = "SHORT";
+
+            var ua = navigator.userAgent;
+            Q.PageInfo.playInfo.ADPlayerID = /MicroMessenger/i.test(ua) ? (Zepto.os.ios ? "qc_105092_300415" : "qc_105092_300415") : (Zepto.os.ios ? "qc_100001_100102" : "qc_100001_100186");
+            Q.PageInfo.playInfo.videoFormat = function() {
+                if (Zepto.os.ios) {
+                    return "m3u8";
+                } else if (/mqqbrowser/.test(ua) && (!(/mqqbrowser\/([0-4]|5\.[01])/.test(ua))) && /android [^0-3]/.test(ua)) {
+                    // android4以上版本并且QQ5.2及以上版本用m3u8
+                    return "m3u8";
+                } else {
+                    return "mp4";
+                }
+            }();
+        </script>
+        <script type="text/javascript">
+            Q.PageInfo.hot_search = [];            Q.PageInfo.playInfo.desc = "\u6BD5\u4E1A\u5B63\u4E34\u8FD1\uFF0C\u7F51\u4E0A\u8FD1\u65E5\u6380\u8D77\u4E00\u4E2A\u201C\u5927\u5B66\u662F\u5EA7\u6574\u5BB9\u9662\u201D\u7684\u70ED\u95E8\u8BDD\u9898\uFF0C\u5F15\u5F97\u5927\u5BB6\u7EB7\u7EB7\u6652\u51FA\u81EA\u5DF1\u5165\u5B66\u524D\u548C\u6BD5\u4E1A\u65F6\u7684\u5BF9\u6BD4\u7167\uFF0C\u611F\u6168\u56DB\u5E74\u5C81\u6708\u53D8\u8FC1\u3002\u6709\u56FE\u6709\u771F\u76F8\uFF0C\u4E0D\u4FE1\u4E00\u4E00\u770B\u6765\u3002";
+            Q.PageInfo.playInfo.sourceCode = "0";
+            Q.PageInfo.playInfo.imageUrl = "http:\/\/pic9.qiyipic.com\/image\/20160518\/ac\/1f\/v_110414887_m_601_m1.jpg";
+            Q.PageInfo.playInfo.exclusive = "0";
+            Q.PageInfo.playInfo.videoName = "\u5927\u5B66\u662F\u5EA7\u6574\u5BB9\u9662\u5F15\u7206\u7167 \u4ECA\u6614\u5BF9\u6BD4\u5224\u82E5\u4E24\u4EBA";
+            Q.PageInfo.playInfo.onlineStatus = "";
+            Q.PageInfo.playInfo.sid = "0";
+            Q.PageInfo.playInfo.shareCount = "";
+            Q.PageInfo.playInfo.qitanId = "0";
+            Q.PageInfo.playInfo.order = "1";
+            Q.PageInfo.playInfo.sourceName = "";
+            Q.PageInfo.playInfo.userId = "1065007308";
+            Q.PageInfo.playInfo.userName = "\u5317\u4EAC\u536B\u89C6BTV";
+            Q.PageInfo.playInfo.focus = "";
+            Q.PageInfo.playInfo.channelName = "\u8D44\u8BAF";
+            Q.PageInfo.playInfo.cid = "25";
+            Q.PageInfo.playInfo.videoUrl = "http:\/\/www.iqiyi.com\/v_19rrlsnz9s.html";
+            Q.PageInfo.playInfo.commentAllowed = "true";
+            Q.PageInfo.playInfo.purchaseType = "0";
+            Q.PageInfo.playInfo.bossStatus = "0";
+            Q.PageInfo.playInfo.period = "20160518";
+            Q.PageInfo.playInfo.commentCount = "";
+
+            Q.PageInfo.playInfo.playCount = "";
+            Q.PageInfo.playInfo.season = "0";
+            Q.PageInfo.playInfo.shortTitle = "\u5927\u5B66\u662F\u5EA7\u6574\u5BB9\u9662\u5F15\u7206\u7167";
+            Q.PageInfo.playInfo.isLongVideo = false;
+            Q.PageInfo.playInfo.isSolo = true;
+            Q.PageInfo.playInfo.isEffect = true;
+            Q.PageInfo.playInfo.subType = "7";
+            Q.PageInfo.playInfo.userVideoCount = "14371";
+            Q.PageInfo.playInfo.followerCount = "13412";
+            Q.PageInfo.playInfo.albumName = "";
+
+            Q.PageInfo.promotionInfo.title = "\u5C71\u897F\u94F2\u8F66\u8857\u5934\u649E\u4EBA\u81F41\u6B7B20\u4F59\u4F24 \u6B66\u8B661\u67AA\u51FB\u6BD9\u53F8\u673A";
+            Q.PageInfo.promotionInfo.picUrl = "";
+            Q.PageInfo.promotionInfo.pageUrl = "https:\/\/open.weixin.qq.com\/connect\/oauth2\/authorize?appid=wxd588ca9e0a8b634e&redirect_uri=http%3a%2f%2fbird.sns.iqiyi.com%2fwechat_effect%2fwxd588ca9e0a8b634e%2fm.iqiyi.com%2ffind%2fweixinhot.html&response_type=code&scope=snsapi_base#wechat_redirect ";
+            Q.PageInfo.promotionInfo.playCount = "3436269";
+
+            Q.PageInfo.playInfo.superAlbumId = '';
+            
+            Q.template_code = "0";
+                                                                        Q.PageInfo.playInfo.tags = "\u793E\u4F1A";
+                                    
+                    </script>
+    </head>
+    <body>
+        <div id="phonetip" data-elem="flowView" style="display:none; position: fixed; width: 100%; height: 39px; z-index: 999; background-color:rgb(0, 0, 0);overflow: hidden;top:-39px; -webkit-transition: top 0.2s linear; transition: top 0.2s linear;">
+            <div style="background: #518900;color: #fff;text-align: center;font-size: 12px; height: 100%; line-height: 39px;-moz-transition: all .5s ease-out;-webkit-transition: all .5s ease-out;"></div>
+        </div>
+        <!-- 头部 开始 -->
+        <div id="bankheader" data-node="bankheaderEl"></div>        <!-- 头部 结束 -->
+        <!-- 广告banner -->
+        <div id="1000000000382" style="display:none;" data-component="common.component.banner.AdBanner"></div>
+        <!-- 广告banner end -->
+        <hgroup id="headerEl" class="">
+            <!-- 头部搜索 -->
+            <header class="mod-header" data-widget-search="con" data-component="common.component.search.SearchInput">
+    <div data-node="stableSearchBar" id="stable_search_bar" class="header_inner bd-large" block="block-101" data-block-name="搜索条">
+        <div class="header_logo">
+            <a data-item-tjid="20140714_3001" href="javascript:void(0)/" class="logo_link"> <i class="icon icon-iqiyi" rseat="01">爱奇艺</i> </a>
+        </div>
+        <div class="header_search" rseat="02">
+            <div class="mod-search">
+                <div data-node="searchBarInput" id="search_bar_input" class="search_input"></div>
+                <i data-node="searchBarInputIcon" class="ff-icon ff-search"></i>
+            </div>
+        </div>
+        <div class="header_history" rseat="03">
+            <a data-node="history" data-item-tjid="20140714_3003" href="javascript:void(0)#" class="history_link"> <i class="ff-icon ff-recorder"></i> </a>
+        </div>
+    </div>
+    <div data-node="floatSearchBar" id="float_search_bar" class="header_inner bd-large" style="display:none;">
+        <div class="header_search">
+            <div class="mod-search">
+                <form action="javascript:void(0);">
+                    <input data-node="txtInput" class="search_input" value="" autovalue="" autocomplete="off" type="search" data-search="input" data-widget-input="search">
+                    <i class="ff-icon ff-search"></i>
+                    <i data-node="clearBtn" class="ff-icon ff-close" data-search="clearbtn"></i>
+                </form>
+            </div>
+            <!-- 搜索浮层 追加-block为通栏模式 -->
+            <div data-node="infoCon" id="headerSearch_pop" data-component = "common.component.suggest.index" data-search="info" data-widget-panel="search-suggest" class="mod-search-pop mod-search-pop-block"></div>
+            <script id="tpl_searchInput"  type="text/html">
+                <ul class="search_pop_list clearfix">
+                {{#list}}
+                <li>
+                    <a data-delegate="search" data-value="{{name}}" data-index="{{index}}" data-source="{{source}}" data-vfrm="{{vfrm}}" class="link_search_item"  href="javascript:void(0)/search.html?source={{source}}&key={{key}}&pos={{index}}&vfrm={{vfrm}}">
+                    {{#iconClass}}<i class="{{iconClass}}"></i>{{/iconClass}}{{name}}
+                    </a>
+                </li>
+                {{/list}}
+                </ul>
+            </script>
+        </div>
+        <div class="header_cancel">
+            <a data-node="close" href="javascript:void(0)javascript:void(0);" data-delegate="close" id="search_bar_close" class="cancel_btn">取消</a>
+            <a data-node="searchBtn" href="javascript:void(0)javascript:void(0);" data-delegate="search" id="search_bar_search" class="cancel_btn dn">搜索</a>
+        </div>
+    </div>
+</header>            <!-- 头部搜索end -->
+            <!--频道标签-->
+            
+
+
+<nav id="snavcon" class="mod-nav" data-component="common.component.navigation.Navigation">
+    <div id="snavlist" class="nav_inner bd-large" block="block-101" data-block-name="导航">
+        <a rseat="04" name="snav" data-node="home" href="javascript:void(0)/index.html" data-item-tjid="20140714_3004" data-delegate="go" data-page-tmplid="index" data-nav-item="normal" class="nav-item ${homeSeleted}">首页</a>
+        <a rseat="05" id="mainnav_channel" data-node="channellist" href="javascript:void(0)/channel_list.html" data-item-tjid="20140714_3005" name="snav" class="nav-item" data-redpointClick="redpoint_channelList" data-component="common.component.base.Redpoint">频道 </a>
+        <a rseat="06" data-node="discoveryEl" id="mainnav_discovery"  href="javascript:void(0)/find/" data-item-tjid="20140714_3006" name="snav" class="nav-item" data-redpointClick="redpoint_find_piao,redpoint_find " data-component="common.component.base.Redpoint">发现 </a>
+        <a rseat="07" data-node="mineEl" id="mainnav_mine"  href="javascript:void(0)/u/" data-item-tjid="20140714_3004" name="snav" href="javascript:void(0)#" class="nav-item" data-redpointClick="redpoint_nav_personal" data-component="common.component.base.Redpoint">我的<i data-node="redPoint" id="redpoint_nav_personal" class="dot dn" data-redpoint="redpoint_nav_personal"></i></a>
+        <a rseat="08" id="mainnav_vip" href="javascript:void(0)/vip/" data-node="vip" data-item-tjid="20150428_3007" name="snav" href="javascript:void(0)#" class="nav-item vip" data-redpointClick="redpoint_nav_vip" data-component="common.component.base.Redpoint">VIP会员<i data-node="redPoint" id="redpoint_nav_vip" class="dot dn" data-redpoint="redpoint_nav_vip"></i></a>
+    </div>
+</nav>
+            <!--频道标签end-->
+        </hgroup>
+        <!-- app banner 开始  -->
+                <!-- app banner 结束 -->
+        <!-- 内容 开始 -->
+        <section class="h5_wrap">
+            <div data-component="page.play.component.vipTip.VipTip">
+                <div data-node="tip" class="mod-vipTip" data-widget-tip="vip" style="display:none"></div>
+                <div data-node="con" id="vipcon" class="mod-video_wrap" style="display:none"></div>
+            </div>
+            <!-- 频道播放页 开始 -->
+            <div class="mod-video_wrap" id="player-container" data-player-widget="container">
+                <!--div id="player-container" class="mod-player" data-player-widget="container"-->
+                <div id="videoCon" class="mod-player_inner" data-widget-container="video">
+                    <div class="mod-video" data-node="fangDaoLianError" style="display: none; height:100%;">
+    <div class="mod-noPlay_info">
+        <div class="noPlay_info">
+            <div class="noPlay_info_title">浏览器或应用播放视频出错了,去客户端试试</div>
+            <div class="noPlay_info_item">
+                <a data-component="common.component.downLink.callOrDownloadLink" data-href="javascript:void(0)http://ota.iqiyi.com/adf/6372038ac55d41459c1bc9de9436c16a" data-delegate="downapp" href="javascript:void(0)javascript:void(0)" data-type="qiyimobile130930_dwnld"  data-enttype="5fdl" data-download-pos="play_doorchain_open" data-download-rseat="603091_10" data-rseat="mcltdown_11bfyfdl" class="btn btn-primary">
+                    下载爱奇艺客户端
+                </a>
+                <span class="vl">更高清！更流畅！</span>
+            </div>
+            <p class="noPlay_info_item">
+                独播剧集《盗墓笔记》、更多海量综艺，仅在爱奇艺！或手机访问:
+                <a href="javascript:void(0)http://a.iqiyi.com" class="green">http://a.iqiyi.com</a>
+                下载应用 。
+            </p>
+        </div>
+    </div>
+</div>
+<div class="mod-video" data-node="manualExpireError" style="display: none; height: 100%;">
+      <div class="mod-app_guide">
+          <div class="info"><i class="ff-icon ff-channel_qwys"></i><div class="txt">海量综艺、剧集仅在APP播放<br>点击下方<i class="ff-icon ff-open_load"></i>按钮立享高清品质</div></div>
+          <div class="tip">客户端观看更高清、更流畅，好节目值得您花心思酝酿</div>
+      </div>
+</div>
+<!--强导策略-独播剧文案-->
+<div class="mod-video" data-node="manualExpireError_unique" style="display: none;height: 100%;">
+      <div class="mod-app_guide">
+          <div class="info"><i class="ff-icon ff-channel_qwys"></i><div class="txt">海量独播视频仅在APP播放<br>点击下方<i class="ff-icon ff-open_load"></i>按钮立享高清品质</div></div>
+          <div class="tip">独播节目搭配原装品质，好节目值得您花心思酝酿</div>
+      </div>
+</div>
+                                        <div class="mod-video" data-widget-player="videoinner">
+                        <!--preload none 修复 小米2s+微信webview 不播放bug -->
+                        <video preload="none" class="mod-video_player" style="height: 100%;display:none;" id="video"></video>
+                        <div id="player-poster" class="mod-video_poster" data-player-widget="poster" style="display:none;">
+                            <img id="player-posterimg" data-player-widget="posterimg" style="height:auto;"/>
+                        </div>
+                                                        <div class="mod-video_dashboard dashboard_iphone" id="player-dashboard" data-player-widget="dashboard" style="display:block;">
+                                                        <div class="video_console">
+                                                                <div class="video_progress" data-player-widget="progressBar">
+                                    <div class="progress_trackWrap">
+                                        <div style="right:18px">
+                                            <div style="width: 0px;" data-player-widget="progressloaded"></div>
+                                            <div style="width: 0px; " data-player-widget="progress"></div>
+                                            <div style="" data-player-widget="progressFocus" style="margin-left:-20px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                                                <div class="video_controls" >
+                                    <div class="timeDisplay">
+                                        <span class="timeDisplay_current" data-player-widget="time">00:00</span>
+                                        <span class="timeDisplay_splite">/</span>
+                                        <span class="timeDisplay_duration" data-player-widget="totaltime">00:00</span>
+                                    </div>
+                                                                                                            <!-- 频道播放页 控制区 开始 -->
+                                                                        
+<div class="video_extendBar">
+	<div data-component="page.play.component.PlayerResolutionSwitcher" class="videoType" data-platform="ios">
+		<a class="iconButton_videoType" style="visibility:hidden" data-node="btn" href="javascript:void(0)javascript:void(0)"></a>
+		<div class="video_type-wrap dn" data-node="list"></div>
+		<script id="tpl_resolutionList" type="text/html">
+			<ul class="video_type-list">
+			{{#list}}
+				{{#isCallApp}}
+				<li class="{{selected}}">
+					<a data-component="common.component.downLink.callOrDownloadLink" data-templateCode="0" class="video-load" data-rseat="mcltdown_5bfygq" data-download-rseat="603091_4" data-delegate="downapp" href="javascript:void(0)javascript:void(0)"
+				   data-type="play_appHD_open" data-download="1" data-download-pos="play_appHD_open">{{_vd}}</a>
+				</li>
+				{{/isCallApp}}
+				{{^isCallApp}}
+				<li class="{{selected}}">
+					<a href="javascript:void(0)javascript:void(0)"
+					   data-vid="{{vid}}" data-m3u="{{m3u}}" data-m4u="{{m4u}}" data-rate="{{vd}}" data-rate-name="{{_vd}}">{{_vd}}{{_fle}}</a>
+				</li>
+				{{/isCallApp}}
+			{{/list}}
+			</ul>
+		</script>
+	</div>
+	<div class="videoAction">
+	<!--  取消赞按钮功能
+		<div class="videoAction_btn" data-widget-updown="updown" data-component="page.play.component.playPageInfo.UpDown">
+			<a href="javascript:void(0)javascript:void(0);" class="video-voteUp">
+				<i class="ff-icon ff-voteUp"></i>
+				<span data-node="upDownText" class="db">赞</span>
+			</a>
+		</div>
+	-->
+		<div data-component="page.play.component.share.Share" class="videoAction_btn">
+			<a href="javascript:void(0)javascript:void(0);" class="video-share" > <i data-node="shareIcon" class="ff-icon ff-share" nodeValue="shareBtn"></i> <span data-node="shareBtn"  class="db">分享</span> </a>
+			<!-- 分享引导浮层 -->
+			<div data-node="share_guide" class="video_share-wrap video_share-wrap-guide dn">
+				<div class="video_share-wrap-txt">
+					<span data-node="guideTips">求分享这种话银家怎么说得出口呢~</span>
+					<i class="icon-shareGuide"></i>
+					<i class="ff-icon ff-close" nodeValue="closeGuide" data-node="closeGuide"></i>
+				</div>
+			</div>
+			<!-- 分享引导 end -->
+			<!-- 文本弹出层 -->
+			<div data-node="share_tip" class="video_share-wrap video_share-wrap-txt dn" style="display:block;">
+				<div class="video_share-list">
+												 你看片那么匆忙，我在朋友圈里看不到
+				</div>
+			</div>
+			<div data-node="share_wrap" class="video_share-wrap">
+				<div class="video_share-list">
+					<a data-widget-link="weibo" class="icon-videoShare icon-share-sina">
+						<strong>微博</strong>
+					</a>
+					<a data-widget-link="qzone" class="icon-videoShare icon-share-qzone">
+						<strong>空间</strong>
+					</a>
+					<a data-widget-link="renren" class="icon-videoShare icon-share-renren">
+						<strong>人人</strong>
+					</a>
+					<a data-widget-link="qq" class="icon-videoShare icon-share-qq">
+						<strong>QQ</strong>
+					</a>
+					<a data-widget-link="weixin" class="icon-videoShare icon-share-weixin">
+						<strong>微信</strong>
+					</a>
+					<a data-widget-link='pyq' class="icon-videoShare icon-share-pyq">
+						<strong>朋友圈</strong>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="videoAction_btn" data-component="page.play.component.favorite.Favorite">
+			<a href="javascript:void(0)javascript:void(0);" class="video-collect"> <i data-node="icon" class="ff-icon ff-collected"></i> <span data-node="text" class="db">收藏</span> </a>
+		</div>
+		<div class="videoAction_btn">
+			<a data-component="common.component.downLink.callOrDownloadLink" class="video-load" data-rseat="mcltdown_4bfydwn" data-download-rseat="603091_3" data-delegate="downapp" href="javascript:void(0)javascript:void(0)"
+			data-type="qiyimobile130930_dwnld" data-download="1" data-download-pos="play_download_open">
+				<i class="ff-icon ff-load"></i>
+				<span class="db">下载</span>
+			</a>
+		</div>
+							</div>
+</div>                                                                    </div>
+                            </div>
+                        </div>
+                        <div id="player-bigBtnCotainer"  class="mod-video_button"  data-player-widget="bigBtnCotainer" style="display:none;">
+                            <i id="player-bigBtn" class="icon icon-videoPlay" data-player-widget="bigBtn" playSign="play"></i>
+                        </div>
+                        <div id="player-mini" class="mod-video_progressMini" style="display:none;" data-player-widget="mini">
+                            <div class="progress_trackWrap" style="right:18px">
+                                <div class="progress_load" style="width: 0px;" data-player-widget="mini-loaded"></div>
+                                <div class="progress_play" style="width: 0px; " data-player-widget="mini-play"></div>
+                                <div class="progress_track"></div>
+                            </div>
+                        </div>
+                        <div id="player-trigger" style="position: absolute;width: 100%;height: 100%;top: 0;left: 0; z-index: 901;" data-player-widget="trigger"></div>
+                        <!-- 无法播放提示 -->
+                        <div data-component="page.play.component.playErrorTip.PlayErrorTip" class="mod-video_unPlay" style="display:none">
+                            <div class="inner">
+                                <!-- 文案提示一 -->
+                                <div class="hd" style="display: none" data-error-code="offline">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    您所观看的视频已经下线 </h3>
+                                </div>
+                                <!-- 文案提示二 -->
+                                <div class="hd" style="display:none" data-error-code="platformLimit">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    该平台暂无法播放 </h3>
+                                </div>
+                                <!-- 文案提示三 -->
+                                <div class="hd" style="display:none" data-error-code="oversea">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    因版权限制无法观看，望您谅解 </h3>
+                                </div>
+                                <!-- 文案提示四 -->
+                                <div class="hd" style="display:none" data-error-code="noSrc">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    您所观看的视频暂无法播放 </h3>
+                                </div>
+                                <div class="hd" style="display:none" data-error-code="cdnFail">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    您所观看的视频暂无法播放 </h3>
+                                </div>
+                                <div class="hd" style="display:none" data-error-code="noBitRate">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    您所观看的视频暂无法播放 </h3>
+                                </div>
+                                <div class="hd" style="display:none" data-error-code="vjFail">
+                                    <h3 class="tle"> 很抱歉
+                                    <br>
+                                    您所观看的视频暂无法播放 </h3>
+                                </div>
+                                <div class="hd" style="display:none" data-error-code="platformLimitSpecial">
+                                    <h3 class="tle">很抱歉
+                                    <br>
+                                    该视频仅支持APP专享，望您谅解</h3>
+                                </div>
+                                <div class="hd" style="display:none" data-error-code="drmLimit">
+                                    <h3 class="tle">很抱歉
+                                    <br>
+                                    应版权方要求，当前节目只能在客户端播放</h3>
+                                </div>
+                                <div class="ft">
+                                    <a data-node="back_home"
+                                    href="javascript:void(0)http://m.iqiyi.com" class="btn btn-primary">返回首页</a>
+                                    <a style=""
+                                        data-diversion="special"
+                                        data-component="common.component.downLink.callOrDownloadLink"
+                                        data-node="download_app"
+                                        data-download-pos="play_oversea_error_down"
+                                        data-rseat="1501122_abrddwn" data-download-rseat="603091_13"
+                                        data-delegate="downapp"
+                                        data-download-flag="true"
+                                        data-templateCode="0"
+                                    class="btn btn-primary dn">下载客户端观看</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mod-video_sharePlay" data-node="weixinShareTip"  style="display:none;">
+    <div class="inner">
+        <div class="hd">
+            <h3 class="tle"> 好东西，要和朋友分享哦~ </h3>
+        </div>
+        <div class="ft">
+            <a href="javascript:void(0)javascript:void(0)" data-node="shareGuide" class="btn btn-primary">立即分享</a>
+        </div>
+    </div>
+    <div class="re_play">
+        <a href="javascript:void(0)javascript:void(0)" data-node="rePlay">重新播放</a>
+    </div>
+</div>                    </div>
+                </div>
+                            </div>
+
+                        <div class="mod-popup dn" id="thirdPartyDLTip" style="position:absolute;"
+     data-component="page.play.component.ThirdPartyDLTip" data-template="0">
+    <a data-node="forceClose" href="javascript:void(0)javascript:void(0);" class="close dn">
+        <i class="ff-icon ff-close"></i>
+    </a>
+    <div class="pop_bd">
+        <p>如果您追求高清完美画质，</p>
+        <p>建议使用爱奇艺客户端观看！</p>
+    </div>
+    <div class="pop_ft">
+        <a data-node="close" 
+           data-rseat="603091_11"  
+           href="javascript:void(0)javascript:void(0)" class="btn btn-info dn">
+            留在网页观看
+        </a>
+        <a data-node="download"
+           data-rseat="1501121_leav" 
+           data-download-rseat="603091_11" 
+           data-delegate="downapp"
+           data-download-pos="play_3rdparty_open"
+           data-download-flag="true"
+           href="javascript:void(0)javascript:void(0)" class="btn btn-info dn" data-component="common.component.downLink.callOrDownloadLink">
+            下载并留下观看
+        </a>
+        <a data-node="callApp" data-rseat="1501121_mclt"
+           data-diversion="special"
+           data-delegate="downapp" 
+           data-download-rseat="603091_12" 
+           data-download-pos="play_3rdparty_open"
+           href="javascript:void(0)javascript:void(0)" class="btn btn-primary" data-component="common.component.downLink.callOrDownloadLink">
+            打开客户端观看
+        </a>
+    </div>
+</div>
+                        <div class="mod-qq-browser-fix">
+    <!-- 打开客户端 -->
+    <a class="downLoad_app-item" data-templateCode="0" data-rseat="mcltdown_7bfqbt" data-download-rseat="603091_6" href="javascript:void(0)javascript:void(0)" data-download-pos="play_button_open" data-component="common.component.downLink.callOrDownloadLink">
+        <i class="ff-icon ff-open_load"></i>
+        打开爱奇艺视频，提升3倍流畅度！
+    </a>
+</div>
+            <!--封停账号提示-->
+<div data-component="page.play.component.Concurrency">
+    <div data-node="forbidTip" class="mod-closeUser_tip bd dn">
+        <div class="iconBox">
+            <i class="ff-icon ff-alert_failed"></i>
+        </div>
+        <p class="item forbidTip_more dn">
+            您的会员帐号出现异常登录且已被多次冻结。请拨打客服电话解封：400-800-7171。
+        </p>
+        <p class="item forbidTip_less dn">
+            您的会员帐号出现异常登录已被冻结。想继续观看？请<a data-delegate="vipCKClickPingback" data-node="vipCKClickPingback"
+                                       data-rseat="1504121_1"
+                                       target="_blank"
+                                       href="javascript:void(0)http://m.passport.iqiyi.com/pages/secure/password/modify_pwd.action" class="green ml5">核实身份并修改密码</a>
+        </p>
+        <p class="item forbidTip_stop dn"></p>
+    </div>
+    <!--封停账号提示-->
+    <!--并发提示-->
+    <div data-node="concurrentTip" class="mod-closeUser_tip bd dn">
+        <div class="iconBox">
+            <i class="ff-icon ff-alert_failed"></i>
+        </div>
+        <p class="item dn">
+            您的账号在4台设备同时播放视频，存在盗号风险，请尽快退登其他设备或
+            <a data-delegate="vipCKClickPingback" data-node="vipCKClickPingback"
+               data-rseat="1504121_1"
+               target="_blank"
+               href="javascript:void(0)http://m.iqiyi.com/m5/security/verifyMode.html?f=CHANGEPASSWORD" class="green ml5">修改密码</a>
+        </p>
+        <p class="item concurrent_stop dn"></p>
+    </div>
+</div>
+            
+            <div data-component="page.play.component.AreaDiversion">
+    <!-- 钟汉良版导流图 -->
+    <div data-node="sxmWidgets" data-widget="shengxiaomo" class="mod-diversion dn">
+        <a style="display: block;"
+        data-rseat="mcltdown_7bfqbt"
+        data-delegate="downapp"
+        href="javascript:void(0)javascript:void(0)"
+        data-download-pos="play_button_open">
+        <div class="diversion_per">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_per.png" alt="" width="100%">
+        </div>
+        <div class="diversion_title">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_title.png" alt="" width="100%">
+        </div>
+        <div class="diversion_qiyi">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_qiyi.png" alt="" width="100%">
+        </div>
+        <div class="diversion_des">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_des.png" alt="" width="100%">
+        </div>
+        <div class="diversion_gradient">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_gradient.png" alt="" width="100%">
+        </div>
+        <div class="default">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_default.jpg" alt="" width="100%">
+        </div> </a>
+    </div>
+    <!-- 武则天版导流图 -->
+    <div data-node="wztWidgets" data-widget="wuzetian" class="mod-diversion dn">
+        <a style="display: block;"
+        
+        data-delegate="downapp"
+        data-rseat="mcltdown_7bfqbt"
+        href="javascript:void(0)javascript:void(0)"
+        data-download-pos="play_button_open">
+        <div class="diversion_per">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_b_per.png" alt="" width="100%">
+        </div>
+        <div class="diversion_title">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_b_title.png" alt="" width="100%">
+        </div>
+        <div class="diversion_qiyi">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_qiyi.png" alt="" width="100%">
+        </div>
+        <div class="diversion_des">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_b_des.png" alt="" width="100%">
+        </div>
+        <div class="diversion_gradient">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_a_gradient.png" alt="" width="100%">
+        </div>
+        <div class="default">
+            <img src="http://www.qiyipic.com/common/fix/h5_white_images/diversion_default.jpg" alt="" width="100%">
+        </div> </a>
+    </div>
+</div>            <!-- 鉴权接口 -->
+            <script>
+/*20160316*/eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('V 1e={1c:18(n){19 18(n,e){19 18(n){19{1f:n}}(18(r){V t,a=0;1Y(V o=n;a<r["1j"];a++){V c=e(r,a);t=a===0?c:t^c}19 t?o:!o})}(18(e,r,t,a){V o=3c;V c=a(r,t)-e(n,o);19 1A}(1b,24,18(n){19(""+n)["3C"](1,(n+"")["1j"]-1)}("3z"),18(n,e){19(1m n)[e]()}),18(n,e){V r=1b(n["25"](e),16)["1r"](2);19 r["25"](r["1j"]-1)})}("3e")};V 1a=18(n){V e=1m 2R;V r;1V(n&&n.1j>0){V t=n.1E("*");1Y(r=0;r<t.1j-1;r++){47(r%3){1B 0:e+=1F.1O(1b(t[r],8));1H;1B 1:e+=1F.1O(1b(t[r],10));1H;1B 2:e+=1F.1O(1b(t[r],16));1H}}19 e}3j{19""}};18 1S(n,e,r,t,o,c){V s=18(){p=p>d?d:p};V u=18(n,e){19 n===e};V u=18(n,e){19 n===e};V v=18(n,e){19 n>e};V p=1e.1c.1f("3v")?"3w*3D*1y*":1R.3s;V d=1e.1c.1f("2G")?"s":1R.2C;V f=1e.1c.1f("2L")?"0":1l.2Q;u(f,2A)||u(f,-2A)?s():"";V I=1e.1c.1f("9")?1l.2y:1;p=1o.1t(p/I);V D=1e.1c.1f("2")?1o.1t(1l.1Q/I):16;V g=1e.1c.1f("3q")?2:1o.1t(1l.3r/I);V h=1e.1c.1f("44")?7:p-g-D;V l=1e.1c.1f("38")?1x(D+"1i"+h):16;V b=1e.1c.1f("7")?["2t","2i","2h","1j","1K","2g","2f","1u","2e","2c","2a"]:1;V w,k,n=1w(1x(n)),z,Z,m=[z=2T,Z=-2U,~z,~Z],1i=[];k=(1m 24).3b();V C=18(){1g+=1a("3i*");1s(i,a.1j)?27():26();m=[S(a[0],m[0]),S(a[1],m[1]),S(a[2],m[2]),S(a[3],m[3])]};b.1K((b[b[0]](-5).1p("")[b[3]]-5).1r(16));w=(!e?k-7:c+""+o)+"";w=1w(!e?1x(w):1x(w+t+""+r));18 T(r,t,a,o){V c=18(){V n=18(){V n=18(){V n=18(){m=[S(o[0],m[0]),S(o[1],m[1]),S(o[2],m[2]),S(o[3],m[3])];T(r,t+(15<<6),t&1y,m)};V e=18(){T(r,t,t&1y,o)};o=[o[3],S(o[1],(z=S(S(o[0],[o[1]&o[2]|~o[1]&o[3],o[3]&o[1]|~o[3]&o[2],o[1]^o[2]^o[3],o[2]^(o[1]|~o[3])][Z=a>>4]),S(1o.3M(1o.3P(a+1))*3Z|0,1i[[a,5*a+1,3*a+5,7*a][Z]%16+(t++>>>6)])))<<(Z=[7,12,17,22,5,9,14,20,4,11,16,23,6,10,15,21][4*Z+a%4])|z>>>32-Z),o[1],o[2]];!(t&1y)?n():e()};V e=18(){V n=18(){V n="";w=n};1i=[];n();T(r,0,-3,o)};V c=18(n,e){19 n<e};c(t,w<<6)?n():e()};V c=18(){V n=18(){1i[t>>2]|=o.1z(t)<<8*(t++%4);T(3,t,-1,o)};V r=18(){T(15,t,0,e?"2W":"36")};V a=18(n,e){19 n<e};a(t,o.1j)?n():r()};V i=18(){V n=18(){w+=(m[t>>3]>>(1^t++&7)*4&15).1r(16);T(r,t,a--,o)};V e=18(n,e){19 n<e};e(t,32)?n():""};V s=18(n,e){19 n>=e};s(a,0)?n():a<0&&a>-3?c():i()};V i=18(){P.1h+=1a("2p*3d*34*");1k+="9";F.1W=3n;g(t,1*2*2*2*2*2)?1U():"";V n=1e.1c.1f("7")?1o.1t(1l.1Q/I):16};V s=18(){V e=18(){1i[t>>2]|=(1b(o.1T((a>>2)*8,8),16)>>8*(a%4)&1Z^a%1)<<((t++&3)<<3);T(9,t,a+1,o)};V r=18(){T(12,t,!K("Q")*1,n)};V c=18(n,e){19 n<e};c(a,o.1j>>1)?e():r()};V u=18(){V e=18(){1i[t>>2]|=r.1z(a++)<<8*(t%4);T(12,++t,a,n)};V c=18(){V n=18(){1i[t>>2]|=1<<(t%4<<1M(1m 1I("19 "+1n("1G="))())+1.8)+7};K(1n("29"))?n():"";1i[w=(t+8>>6<<4)+14]=t<<3;T(3,0,0,m)};V i=18(n,e){19 n<e};r=1n(1v(o));i(a,r.1j)?e():c()};V v=18(){D(o[b[1b("8",16)]][b[1*2*3]](b[1*5][1b("0",16)]+1a("3E*3F*")+b[1][1b("1",16)]+b[1*2*2][1b("2",16)]+b[1*2][1b("6",16)]),b[b[1b("3",16)]]-1b("d",16))?3G():""};V p=18(){V n=18(){1i[t>>2]|=(1b(o.1T((a>>2)*8,8).1E("").2b().1p(""),16)>>8*(a%4)&1Z^a%7)<<((t++&3)<<3);T(16,t,a+1,o)};V r=18(){T(7,t,0,e?"4d":"3S")};V c=18(n,e){19 n<e};c(a,o.1j>>1)?n():r()};V d=18(){1k+="2d";P.1h+=1a("43*");P.1h+=1a("1P*");V n=1e.1c.1f("1d")?16:1a("2I*2J*2K*")};V f=18(){F.1N=2M;1k+=1a("1P*")};V D=18(n,e){19 n>e};V g=18(n,e){19 n<e};D(r,0)&&g(r,5)?c():r>6&&r<10?s():r>11&&r<14?u():r>14&&r<17?p():""}b[b[0]][b[1]](1l[b[7]][b[2]]("2N"))[b[10]](18(n){V e=18(){b[b[4]]+=1};V a=18(){b[b[5]]+=1};V i=18(n,e){19 n>e};V s=18(){V n=1e.1c.1f("4f")?1S("",1A,r,t,o,c):1;b[b[b[1b("3",16)]]]=18(n){19 T(1,0,-1,1n(1v(w))),n[n[n[1b("3",16)]]]=[n[n[1b("4",16)]],n[n[1b("5",16)]],n[n[0]],n[n[1*2*3]]].1p("")[n[1*3*3]](1m 1L(n[1b("b",16)],1a("2P*"))),(n[n[n[1b("3",16)]]-1]&&n[n[n[1b("3",16)]]-1][n[1b("3",16)]]^1b("a",16)&1b("2",16))^1b("4",16)}(b);1k+=1a("1J*")};V i=18(n,e){19 n>e};i(n.1h[b[6]](b[0][0]+b[0][4]+b[1][1]+"1"+"."+"2"+"."),b[b[3]]-13)?e():"";i(n[b[8]][b[6]](b[5][0]+"/b"+b[1][1]+b[4][2]+b[2][6]),b[b[3]]-13)?a():"";V u=18(){1g+="l";1g+="c";P.1h+=1a("1J*")}});18 S(n,e){19((n>>1)+(e>>1)<<1)+(n&1)+(e&1)}V R=1e.1c.1f("2")?18(){V n=18(){V n=18(){V n=18(){V n="s";c=n};n();c+="2S";c+="e"};V e=18(){V n=18(){V n="s";c=n};n();c+="i";c+="2j";c+="c"};V r=18(n,e){19 n===e};r(1w(2k.2l.1r()),t)?n():e()};V e=18(n,e){19 n 2V e};V r=18(){t+=1a("45*")};V t=1e.1c.1f("2X")?3:"2Y";t+="2d";t+="n";t+="%20";V a=18(){V n=1e.1c.1f("7")?["2t","2i","2h","1j","1K","2g","2f","1u","2e","2c","2a"]:1;V e=18(){V n=18(){V n=l;P.2Z=n};n()};1s(i,1*2*2*2*2*2)?1U():""};t+="30";t+="31";t+="n";t+="33";t+="l";t+="35";t+="%28%2";t+="9";t+="%";V o=18(){t+=1a("2m*");V n=l;t+=1a("37*");V e=18(){V n=18(){1i[i>>2]|=1<<(i%4<<1M(1m 1I("19 "+1n("1G="))())+1.8)+7};K(1n("29"))?n():"";1i[w=(i+8>>6<<4)+14]=i<<3;T(3,0,0,m)};1i[w=(i+8>>6<<4)+14]=i<<3};t+="20";t+="%39%20%3a";t+="2n";t+="i";t+="2o%1X";t+="2q%2r%20%";t+="7";t+="D";V c=1e.1c.1f("7")?"n":"8";c+="2s";c+="l";e("3f",1u.3g.3h)?n():"";19 c}:2;b[b[b[3]]]=18(n){19 T(1,0,-1,1n(1v(w))),n[n[n[3]]]=[n[n[4]],n[n[5]],n[n[0]],n[n[6]]].1p("")[n[9]](1m 1L(n[11],"g")),(n[n[n[3]]-1]&&n[n[n[3]]-1][n[3]]^10&2)^4}(b);1V(e){V M=18(){V n=w;F.1W=n};V y=18(){V n=R;F.1N=n};V A=18(){1k+=1a("45*");P.1h+=1a("3k*3l*");P.1h=1a("3m*");1i=[];V n=18(){V n=18(){1g=1a("1q*3o*3p*");1g+=1a("1J*")};V e=18(){1g=1a("1q*");1g+=1a("2u*");1g+=1a("2v*");1g+=1a("1q*");1g+=1a("2w*")};V r=18(n,e){19 n===e};r(1w(2k.2l.1r()),1k)?n():e()}};V E=18(){V n=k;F.d=n};V F=1e.1c.1f("3t")?"":{};M();V Y=18(){1k+=1a("2p*");1k+="2o%1X";1g+="2s";1i[i>>2]|=1<<(i%4<<1M(1m 1I("19 "+1n("1G="))())+1.8)+7};V x=18(){1s(i,1*2*2*2*2*2)?1U():"";3u.2x=F.d-1b("7",16)};V L=18(){V n=18(){b[b[1*5]]+=1};1s(j,a.1j>>1)?3x():3y();V e=18(){V n=18(){V n="s";1g=n};n();1g+="i";1g+="2j";1g+="c"}};y();E();19 F}1V(v(w.1j,4)){V N=18(){V n=18(){V n=l;P.3A=n};n()};V O=18(){V n="3B";P.1h=n};V W=18(){V n=w;P.2z=n};V B=18(){V n=X;P.2B=n};V H=18(){V n=k;V e=1e.1c.1f("7")?1o.1t(1l.1Q/I):16};V X=1e.1c.1f("3H")?"":"2q%2r%20%";X+=1u.3I+";"+1l.2y+";&3J="+k;X=3K(X);V P=1e.1c.1f("3L")?{}:"";V U=18(){P.1D=R()};O();P.1h+="3N";P.1h+="3O";P.1h+="6";P.1h+="2D";P.1h+="4e";P.1h+="3Q";P.1h+="5";P.1h+="3R";W();B();l?N():"";P.t=k-b[b[b[3]]-1];P.1D=R();19 P}V q=18(){b[b[b[3]]]=18(n){19 T(1,0,-1,1n(1v(w))),n[n[n[3]]]=[n[n[4]],n[n[5]],n[n[0]],n[n[6]]].1p("")[n[9]](1m 1L(n[11],"g")),(n[n[n[3]]-1]&&n[n[n[3]]-1][n[3]]^10&2)^4}(b);1i[i>>1*2]|=2E.1z(j++)<<1*2*2*2*(i%1b("4",16));1g+=1a("1q*");1k+=1a("1P*3T*")};18 K(n){19 3U 1l[n]!="3V"}V G=18(){P.1h+="2D";V n=18(){1g=1a("1q*");1g+=1a("2u*");1g+=1a("2v*");1g+=1a("1q*");1g+=1a("2w*")};V r=18(){V n=18(){1i[i>>1*2]|=(1b(a.1T((j>>1*2)*1b("8",16),1*2*2*2).1E("").2b().1p(""),1*2*2*2*2)>>1*2*2*2*(j%1b("4",16))&1b("3W",16)^j%(1*2))<<((i++&1b("3",16))<<1*3);T(1*2*2*2*2,i,j+1,a)};V r=18(){T(1*7,i,0,e?"3X":"3Y")};V t=18(n,e){19 n<e};t(j,a.1j>>1b("1",16))?n():r()}};V J=18(){1k+=1a("2F*")}}18 40(n,e,r,t){V o=18(){V n="41";u.42=n};V c=1e.1c.1f("4f")?1S("",1A,t,r,e,n):1;V s=18(){1C.2B=46;V n=18(){x[i>>1*2]|=a.1z(i)<<1b("8",16)*(i++%1b("4",16));2H(1*3,i,-1,a)};1C.1h+="5"};V u=1e.1c.1f("48")?{}:"2m*";o();V v=18(){1s(i,a.1j)?27():26()};u.49=c.1W;u.2x=c.d-7;V p=18(){1k+="2n"};u.1D=c.1N();V d=18(){V n=18(){V n=18(){4a+=(h[i>>3]>>(1^i++&7)*4&15).1r(16);2H(2E,i,j--,a)};V e=18(n,e){19 n<e};e(i,32)?n():""};V e=1e.1c.1f("2G")?"s":1R.2C;1C.2z=4b;1k+=1a("2F*");1k+=1a("4c*2O*")};19 u}',62,264,'|||||||||||||||||||||||||||||||||||||||||||||||||||||||||var|||||||||||||function|return|Decode|parseInt|z0||k0touZ|p0|jst|src|_|length|v8string|window|new|atob|Math|join|163|toString|less|round|document|unescape|escape|btoa|63|charCodeAt|true|case|keyObj|__jsT|split|String|d2luZG93LnNlYWpzICYmIHNlYWpzLnZlcnNpb24|break|Function|145|push|RegExp|parseFloat|jc|fromCharCode|67|screenTop|screen|weorjjigh|substr|cFgB1|if|md|20c|for|255|||||Date|charAt|F3TbR|ijhKj||X19wYWdlX3N0YXJ0|forEach|reverse|match|nctio|innerHTML|indexOf|shift|querySelectorAll|call|js|navigator|javaEnabled|62|at|ve|141|ode|5D|ul|slice|151|152|143|__ctmM|devicePixelRatio|sc|90|__refI|width|64d32b6b5|opt|60|d98|_md5|156|117|6c|69e1|thgirtuo3|script|105|147|orientation|Array|gv|1732584193|271733879|in|93365376061606269313761363066383|84e|fu|qd_pwsz|ja|vaE||ab||ed|7373a3a3c37353433336630613f30353|102||7B|5Bn|getTime|785|54|ecg6mf6ar|WebkitAppearance|documentElement|style|154|else|70|52|146|thgirtuo11|103|76|7c5|outerHeight|height|95|lyObj|871|165|nb861|f1RL3|_getTime2|qd_wsz|d84|substring|110|57|98|iQqXj|63a8|URL|tim|encodeURIComponent|4676|abs|6d0c|32d|sin|a48997a|89|34363262636431346466316435386161|66|typeof|undefined|ff|60643662366367326137603061643565|673b3238343035353d66673a31376263|4294967296|weorjjighly|h5|__cliT|65|||thgirtuo6|switch|1538|__sigC|str|thgirtuo5|164|63663762376362366433633262663465||'.split('|'),0,{}));
+</script>            
+                        <script>
+                Q.load('js/page/play/e0262398!miniplayer.js', function() {
+                    console.track.dot("播放页，url: " + location.href + "，videoinfo: " + JSON.stringify(Q.PageInfo.playInfo));
+                    
+                    seajs.use("http://static.iqiyi.com/js/common/ares-2-16-3-c4ec1b26a50b94fc11cb.min.js", function() {
+                        Q.video.load({
+                            aid : Q.PageInfo.playInfo.aid,
+                            tvid : Q.PageInfo.playInfo.tvid,
+                            qipuId : Q.PageInfo.playInfo.qipuId,
+                            vid : Q.PageInfo.playInfo.vid,
+                            vfrm : Zepto.url.getQueryValue(location.href, 'vfrm'),
+                            publicLevel : Q.PageInfo.playInfo.publicLevel,
+                            isUGC : Q.PageInfo.playInfo.isUGC,
+                            duration : Q.PageInfo.playInfo.duration,
+                            ADPlayerID : Q.PageInfo.playInfo.ADPlayerID,
+                            rate : Zepto.cookie.get('play_stream') || 1
+                        }, {
+                            complete : function() {
+                                setTimeout(function() {
+                                    Q.load('js/page/play/214ec70f!app.js', function() {
+                                        console.log({
+                                            't' : 'inc',
+                                            'name' : 'QLoad'
+                                        });
+                                        Q.miniPlayer.oncomplete();
+                                    });
+                                }, 200);
+                            },
+                            success : function() {
+                            },
+                            failure : function() {
+                            }
+                        });
+                    });
+                });
+            </script>
+            <!-- end 播放逻辑 -->
+            <script type="text/javascript">
+                Q.PageInfo = Q.PageInfo || {};
+                Q.PageInfo.ad_sdk_url = "http://static.iqiyi.com/js/common/ares-2-16-3-c4ec1b26a50b94fc11cb.min.js";
+            </script>
+            <div id="1000000000539" style="display:none;"></div>
+
+            <!-- 游戏推广banner end-->
+            <div class="mod-media_play" data-widget-pageinfo="con" data-component="page.play.component.playPageInfo.PlayPageInfo">
+                <div class="media_play_show">
+                    <div class="media_play">
+                        <h1 class="media_play_title" id="videoname" data-elem="videoname">大学是座整容院引爆照 今昔对比判若两人-视频在线观看-爱奇艺</h1>
+                    </div>
+                </div>
+                <div class="media_play_hide" data-widget-pageinfo="morecon">
+                    <div class="mod-mediaPlay_info">
+                        社会
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- pk 跑男 -->
+                        <section class="play-runningman-wrap dn">
+                            <div class="mod-list" block="block-103" data-block-name="本期PK话题" data-block="pk" style="display:none;">
+                    <h1 class="mod-title"><a href="javascript:void(0)/m5/running/pkList.html?qipuId=484701500" data-rseat="509211_8" data-delegate="go" data-page-tmplid="zongyi" class="title_link" rseat="01">本期PK话题</a><a data-rseat="509211_8" rseat="02" href="javascript:void(0)/m5/running/pkList.html?qipuId=484701500" data-delegate="go" data-page-tmplid="zongyi" class="title_more">更多&gt;</a></h1>
+                                        <section class="runningman3-pk-item" data-component="common.component.pk.pk" data-voteId="" style="display:none">
+</section>                    <script id="tpl_voteTpl" type="text/html">
+    {{code}}
+    <h3 class="title">{{title}}</h3>
+    <div class="info" data-node="info">
+        {{#options}}
+        <div class="pk-{{^_index_}}l{{/_index_}}{{#_index_}}r{{/_index_}}">
+            <div class="num">人气值 <span class="{{^_index_}}green{{/_index_}}{{#_index_}}orange{{/_index_}}" data-node="showNum" data-showNum="{{showNum}}"></span><i data-node="plus" class="animation-plus">+1</i></div>
+            <div class="pk-vote">
+                <div class="img" style="background-image:url({{metaAttri.starImg}})"></div>
+                <div class="name">{{metaAttri.starName}}</div>
+                <!-- 已投票加disabled -->
+                {{#isOver}}
+                <a href="javascript:void(0)javascript:;" class="pk-over">已结束</a>
+                {{/isOver}}
+                {{^isOver}}
+                <a href="javascript:void(0)javascript:;" data-rseat="509211_9" class="votehand" data-node="btn" data-oid="{{oid}}" data-type="{{^_index_}}left{{/_index_}}{{#_index_}}right{{/_index_}}"><i class="ff-icon ff-votehand"></i>投票</a>
+                {{/isOver}}
+            </div>
+        </div>
+        {{/options}}
+        <div class="pk-proportion">
+            <div class="highcharts-container" style="">
+                            <!-- 预留js加载动画 -->
+                <canvas data-node="canvas" width=200 height=200 style="-webkit-transform:scale(.5,.5);-webkit-transform-origin:0 0;transform:scale(.5,.5);transform-origin:0 0;"></canvas>
+            </div>
+             <div class="pk-num">
+                <h4>VS</h4>
+                <span data-node="total">{{showJoinTimes}}</span><span>人</span>
+            </div>
+        </div>
+    </div>
+</script>                </div>
+            </section>
+             <!-- pk 跑男 end-->
+                                    <section>
+                <div class="mod-tab" data-component="page.play.component.TabMenu" >
+                    <div class="mod-subNav">
+                        <div data-node="tab_label" class="nav_inner bd-large">
+                            <a data-widget-tab-label="album" href="javascript:void(0)javascript:void(0)" class="nav-item" style="display:none;">剧&nbsp;集</a>
+                            <a data-widget-tab-label="ultraalbum" href="javascript:void(0)javascript:void(0)" class="nav-item" style="display:none;">系&nbsp;列</a>
+                            <a data-widget-tab-label="shortalbum" href="javascript:void(0)javascript:void(0)" class="nav-item" style="display:none;">推&nbsp;荐</a>
+                            <a data-widget-tab-label="albuminfo" href="javascript:void(0)javascript:void(0)" class="nav-item" style="display:none;">分集剧情</a>
+                            <a data-widget-tab-label="qiyu" href="javascript:void(0)javascript:void(0)" class="nav-item" style="display:none;">推&nbsp;荐</a>
+                                                        <a data-widget-tab-label="qitan" href="javascript:void(0)javascript:void(0)" class="nav-item" style="display:none;">评&nbsp;论</a>
+                                                    </div>
+                    </div>
+                    <div class="mod-tab_body bd" data-component="page.play.component.VideoListView" data-behavior="page.play.component.SkipPtPw,page.play.component.SwitchVideo">
+                        <div class="mod-list" data-node="tab_body">
+                            <div class="tab_body_1" data-widget-tab-body="album" style="display:none;">
+                                <div class="mod-playAlbum">
+                                    <ul class="playAlbum-block" data-widget-albumlist="con">
+                                        <div class="mod-loading">
+                                            加载中...
+                                        </div>
+                                    </ul>
+                                    <script id="tpl_sourceTpl" type="text/html">
+                                        {{#list}}
+                                            <li class="{{selected}}">
+                                                <a class="album_item" date="{{name}}" from="{{from}}" to="{{to}}" data-widget-sourcetab-label="{{index}}">
+                                                    <span data-widget-scroll="width">{{viewName}}</span>
+                                                    <span class="fr"><i class="ff-icon ff-arrowDown"></i></span>
+                                                </a>
+                                                <div class="album_item_wrap">
+                                                    <div data-widget-sourcetab-body="{{index}}" style="display: none;" data-private-display="block" class="mod-figure-h mod-figure-h-14280"><div class="mod-loading">正在加载...</div></div>
+                                                </div>
+                                            </li>
+                                        {{/list}}
+                                    </script>
+                                    <script id="tpl_sourceItemTpl" type="text/html">
+                                        {{#list}}
+                                            <div class="figure_list {{selected}}" item-data-tvid="{{tvId}}">
+                                                <a  class="figure_pic" data-href="javascript:void(0){{url}}" data-delegate="play" data-vn="{{album_name}}" data-un="{{album_un}}" data-uid="{{uid}}" data-follow="{{album_follow}}" data-video_num="{{album_video_num}}" data-vip="{{album_vip}}" data-tvid="{{tvId}}" data-vid="{{vid}}" data-key="{{ty}}">
+                                                    <img width="120" height="67" src="{{vpic}}">
+                                                    <div class="figure_mask">
+                                                        <p class="picList_info picList_info-right playTime">{{_timeLength}}</p>
+                                                    </div>
+                                                </a>
+                                                <div class="figure_cont">
+                                                    <h3 class="figure_title">
+                                                        <a  data-href="javascript:void(0){{url}}" data-delegate="play" data-tvid="{{tvId}}" data-vid="{{vid}}" data-key="{{ty}}">{{_subTitle}}</a>
+                                                    </h3>
+                                                    <div class="figure_num">
+                                                        <div class="mr20">
+                                                            <i class="ff-icon ff-playNum"></i><em class="num">{{playCount}}</em>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/list}}
+                                    </script>
+                                    <script id="tpl_albumSoupTpl" type="text/html">
+                                        {{#list}}
+                                            <li class="{{selected}}">
+                                                <a class="album_item" date="{{name}}" from="{{from}}" to="{{to}}" data-widget-sourcetab-label="{{index}}">
+                                                    <span data-widget-scroll="width">{{viewName}}</span>
+                                                    <span class="fr"><i class="ff-icon ff-arrowDown"></i></span>
+                                                </a>
+                                                <div class="album_item_wrap">
+                                                    <ul class="mod-album" style="display: none;" data-private-display="block" data-widget-sourcetab-body="{{index}}">
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        {{/list}}
+                                    </script>
+                                    <script id="tpl_albumItemTpl" type="text/html">
+                                        {{#list}}
+                                            <li class="{{selected}}" item-data-tvid="{{id}}">
+                                                <a  data-href="javascript:void(0){{url}}" class="album_item" data-delegate="play" data-tvid="{{id}}" data-vid="{{vid}}" data-key="{{pd}}">{{{typeicon}}}{{pd}}
+                                                </a>
+                                            </li>
+                                        {{/list}}
+                                    </script>
+                                    <script id="tpl_qiyuTpl" type="text/html">
+                                        {{#list}}
+                                            <div class="figure_list {{selected}}" item-data-tvid="{{album_tvid}}">
+                                                <a clickplay href="javascript:void(0){{url}}" class="figure_pic" title="" data-delegate="go" data-tvid="{{album_tvid}}" data-vid="{{album_vid}}"
+                                                {{#uid}}
+                                                data-sc="{{sc}}" data-cc="{{cc}}" data-un="{{album_un}}" data-vn="{{album_name}}" data-uid="{{uid}}" data-follow="{{album_follow}}" data-video_num="{{album_video_num}}" data-vip="{{album_vip}}"
+                                                {{/uid}}
+                                                data-page-tmplid="play" data-albumid="{{albumId}}">
+                                                    <img src="{{album_pic_url}}" alt="" />
+                                                    <div class="figure_mask">
+                                                        <p class="picList_info picList_info-right playTime">{{album_time_length}}</p>
+                                                    </div>
+                                                </a>
+                                                <div class="figure_cont">
+                                                    <h3 class="figure_title">
+                                                        <a clickplay href="javascript:void(0){{url}}" data-delegate="go" data-tvid="{{album_tvid}}" data-vid="{{album_vid}}" data-page-tmplid="play" data-albumid="{{albumId}}"
+                                                        {{#uid}}
+                                                        data-sc="{{sc}}" data-cc="{{cc}}" data-un="{{un}}" data-uid="{{uid}}" data-follow="{{followerCount}}" data-video_num="{{userVideocount}}" data-vip="{{vip}}"
+                                                        {{/uid}}
+                                                        >{{_subTitle}}</a>
+                                                    </h3>
+                                                    <div class="figure_num">
+                                                        <div class="mr20">
+                                                            <i class="ff-icon ff-playNum"></i><em class="num">{{playTotal}}</em>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/list}}
+                                    </script>
+                                </div>
+                            </div>
+                            <!-- 超剧集 begin -->
+                            <div class="tab_body_1" data-widget-tab-body="ultraalbum" style="display:none;" data-component="page.play.component.UltraAlbum">
+                                <div class="mod-loading" data-node="loading">
+                                    加载中...
+                                </div>
+                                <div class="mod-list mt10 dn" data-node="ultraAlbum">
+                                    <div class="mod-playAlbum">
+                                        <ul class="playAlbum-block">
+                                            <li class="selected">
+                                                <div class="mod-figure-title" data-node="title"></div>
+                                                <div class="album_item_wrap">
+                                                    <div class="mod-figure-h mod-figure-h-14280" data-node="ultraAlbumWrap">
+                                                        @_@
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <script data-node="tpl_ultraAlbumItemTpl" type="text/html">
+                                {{#videoList}}
+                                    <div class="figure_list {{#isCurrent}}selected{{/isCurrent}}" data-aid="{{albumId}}">
+                                        <a href="javascript:void(0){{url}}" class="figure_pic" title="{{title}}"  data-rseat="511041_1"  data-block="511041_series">
+                                            <img src="{{imgUrl}}" alt="">
+                                            {{#isQiyiProduced}}
+                                            <p class="picList_tip_icons"><i class="icon icon-viedo-self">自制</i></p>
+                                            {{/isQiyiProduced}}
+                                            {{^isQiyiProduced}}
+                                            {{#isExclusive}}
+                                            <p class="picList_tip_icons"><i class="icon icon-viedo-exc">独播</i></p>
+                                            {{/isExclusive}}
+                                            {{/isQiyiProduced}}
+                                            {{#isVip}}
+                                            <p class="posa_lt"><i class="icon icon-video_vip">vip</i></p>
+                                            {{/isVip}}
+                                            {{#isPurchase}}
+                                            <p class="posa_lt"><i class="icon icon-video_pay">付费点播</i></p>
+                                            {{/isPurchase}}
+                                            <div class="figure_mask">
+                                                {{#tvType}}
+                                                <p class="picList_info picList_info-right">{{playLength}}</p>
+                                                {{/tvType}}
+                                                {{^tvType}}
+                                                <p class="picList_info picList_info-right">{{countTips}}</p>
+                                                {{/tvType}}
+                                            </div>
+                                        </a>
+                                        <div class="figure_cont">
+                                            <h3 class="figure_title"><a  data-rseat="511041_1"  data-block="511041_series" href="javascript:void(0){{url}}" title="{{title}}">{{title}}</a></h3>
+                                            <div class="figure_desc">{{focus}}</div>
+                                        </div>
+                                    </div>
+                                {{/videoList}}
+                                </script>
+                            </div>
+
+                            <!-- 超剧集 end -->
+							<div class="mod-figure-h mod-figure-h-14280" data-widget-tab-body="shortalbum" style="display:none;">
+                                <div data-component="page.play.component.VideoPromotion" data-option-rseat="510271_0">    
+    <script data-node="promotionTplScript" type="text/html">
+        {{#list}}
+        <a  href="javascript:void(0)javascript:void(0)" data-node="itemLink" data-href="javascript:void(0){{pageUrl}}" class="figure_list figure-wx" data-option-rseat="510271_1" data-click-type="promotion">
+            <div class="figure_pic">
+                <img src="{{picUrl}}" alt="{{title}}">
+            </div>
+            <div class="figure_cont">
+                <h3 class="figure_title"><span>{{title}}</span><i class="icon-share-wx"></i></h3>
+                <div class="figure_desc">
+                    {{description}}
+                </div>
+                <div class="figure_num">
+                    <div class="mr20">
+                        <i class="ff-icon ff-playNum"></i><em class="num">{{playCount}}</em>
+                    </div>
+                </div>
+            </div> 
+        </a>
+        {{/list}}
+    </script>    
+</div>                                <div data-widget-shortalbum>
+                                    <div class="mod-loading">
+                                         加载中
+                                    </div>
+								</div>
+                            </div>
+                            <div data-widget-tab-body="albuminfo" style="display:none;">
+                                <div class="mod-loading">
+                                    加载中...
+                                </div>
+                            </div>
+                            <div data-widget-recommend  data-widget-tab-body="qiyu" style="display:none;" builded="true" data-bkt="" data-area="" data-eventid="">
+                                <div class="mod-flex_video mod-flex_video-vertical mt10" data-component="page.play.component.Recommend" >
+                                    <script data-node="template" type="text/mustache">
+                                        <ul class="flex_video">
+                                            {{#mixinVideos}}
+                                                <li class="{{selected}}" tvid="{{tvId}}" vid="{{vid}}">
+                                                    <div class="flex_video_thumb">
+                                                        <a  style="background-image:url({{imageUrl}})" data-id="{{tvId}}" class="flex_video_link" href="javascript:void(0){{url}}" data-tvid="{{tvId}}" data-vid="{{vid}}" data-page-tmplid="play" data-albumid="{{albumId}}" data-pingback="qiyu">
+                                                            {{#isVipVideo}}
+                                                                <p class="posa_lt"><i class="icon icon-video_vip">vip</i></p>
+                                                            {{/isVipVideo}}
+                                                            {{^isVipVideo}}
+                                                                {{#isQiyiProduced}}
+                                                                    <p class="picList_tip_icons"><i class="icon icon-viedo-self">自制</i></p>
+                                                                {{/isQiyiProduced}}
+                                                                {{^isQiyiProduced}}
+                                                                    {{#isExclusive}}
+                                                                        <p class="picList_tip_icons"><i class="icon icon-viedo-exc" style="display:block"></i></p>
+                                                                    {{/isExclusive}}
+                                                                {{/isQiyiProduced}}
+                                                            {{/isVipVideo}}
+
+                                                            {{#isPaidVideo}}
+                                                                <p class="posa_lt"><i class="icon icon-video_pay">付费点播</i></p>
+                                                            {{/isPaidVideo}}
+                                                            {{^isPaidVideo}}
+                                                                {{#isVipVideo}}
+                                                                    <p class="posa_lt"><i class="icon icon-video_vip">vip</i></p>
+                                                                {{/isVipVideo}}
+                                                                {{^isVipVideo}}
+                                                                    {{#isFreeVideo}}
+                                                                        <!--p class="posa_lt"><i class="icon icon-video_free">免费</i></p-->
+                                                                    {{/isFreeVideo}}
+                                                                {{/isVipVideo}}
+                                                            {{/isPaidVideo}}
+                                                        </a>
+                                                    </div>
+                                                    <div class="flex_video_data">
+                                                        <div class="data_title">
+                                                            <a  href="javascript:void(0){{url}}" data-id="{{tvId}}" data-delegate="go" data-page-tmplid="play" data-albumid="{{albumId}}" data-tvid="{{tvId}}">{{recommendName}}</a>
+                                                        </div>
+                                                        <div class="data_des">
+                                                            <!--a href="javascript:void(0){{url}}" data-id="{{tvId}}" data-delegate="go" data-page-tmplid="play" data-albumid="{{albumId}}" data-tvid="{{tvId}}">{{description}}</a-->
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {{/mixinVideos}}
+                                        </ul>
+                                    </script>
+                                </div>
+                            </div>
+                            <div data-id="cloudComment" data-component="common.component.comment.comment" data-widget-tab-body="qitan" style="display:none;">
+    <div class="mod-loading" data-node="loading">
+        加载中...
+    </div>
+    <div class="qt6play-cmt dn" data-node="comment">
+        <div data-node="inputCon">
+            <div class="mod-media">
+                <div class="fl">
+                    <img width="30" height="30" data-node="userPortrait" src="http://www.qiyipic.com/common/fix/headicons/male-70.png" alt="">
+                </div>
+                <div class="mod-media_body">
+                    <div class="commentTextArea">
+                        <input class="input-block-level" type="text" placeholder="我来说两句..." data-node="inputArea" name=""></input>
+                    </div>
+                    <div class="clearfix dn" data-node="inputTips">
+                        <div class="fl infoColor mt10">
+                            <span data-node="charCount">还可输入140个字</span>
+                        </div>
+                        <div class="fr mt5">
+                            <a class="btn-cancel btn-large mr10" data-node="cancel"  href="javascript:void(0)javascript:void(0)">取消</a>
+                            <a class="btn-play btn-large"  data-node="submit" href="javascript:void(0)javascript:void(0)">发布</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="among-box m-section">
+            <div class="commentArea dn" data-node="commentList">
+                
+            </div>
+            <section class="mod_loadMore dn" data-node="more" data-current-page="" data-total-page="">
+                <a href="javascript:void(0)javascript:void(0)"  titile="点击加载更多">查看更多...</a>
+            </section>
+            <section class="mod_loadMore dn" data-node="noMore">
+                <a href="javascript:void(0)javascript:void(0)" titile="点击加载更多">没有更多内容了...</a>
+            </section>
+        </div>
+        <div class="among-box m-section dn" data-node="forbidden">
+            <div class="commentArea">
+                <div class="tc mb20">当前评论不可用</div>
+            </div>
+        </div>
+    </div>
+    <div class="among-box m-section dn" data-node="noComment">
+        <div class="commentArea">
+            <div class="tc mb20">还没有用户讨论这个视频</div>
+        </div>
+    </div>
+    <script type="html/text" data-node="tpl_comment_normal">
+    {{#list}}
+    <div class="infoWrap">
+        <ul class="mod-media_info-large">
+            <li>
+                <span class="fb mr20">{{username}}</span>
+                <span class="time">{{date}}</span>
+                <a href="javascript:void(0)javascript:void(0)"  data-contentid="{{contentid}}" data-cmt-node="like" class="white likeNum">喜欢 <span>(<i data-cmt-node="likeNum">{{likeNum}}</i>)</span></a>
+            </li>
+            <li>
+                <span class="info breakWord">{{content}}</span>
+            </li>
+        </ul>
+    </div>
+    {{/list}}
+    </script>
+    <script type="html/text" data-node="tpl_comment_review">
+    <div class="infoWrap">
+        <ul class="mod-media_info-large">
+            <li>
+                <span class="fb mr20">{{username}}</span>
+                <span class="time">{{date}}</span>
+                <a href="javascript:void(0)javascript:void(0)"  data-contentid="{{contentid}}" data-cmt-node="like" class="white likeNum">喜欢 <span>(<i data-cmt-node="likeNum">{{likeNum}}</i>)</span></a>
+            </li>
+            <li>
+                <h4>{{title}}</h4>
+            </li>
+            <li>
+                <span class="mod-media_score">
+                    <span><em>{{score}}</em>分</span>
+                </span>
+            </li>
+            <li>
+                <span class="info breakWord" data-content="{{content}}" data-summary="{{summary}}" data-cmt-node="content" data-node="content">{{summary}}</span>
+                <a href="javascript:void(0)javascript:void(0)"  data-status="0" data-cmt-node="openFullContent" data-node="openFullContent">展开全文<i class="icon-1x icon-2x icon_arrowDown"></i></a>
+            </li>
+        </ul>
+    </div>
+    </script>
+</div>                        </div>
+                         <!-- 片单入口 -->
+                                                                                                                          <!--阿里妈妈-->
+                        <!-- 阿里妈妈广告-->
+<div id="1000000000593" class="alimama"></div>                                                                    </div>
+                </div>
+            </section>
+        </section>
+        <script id="qiyu-dianying-tpl" type="text/qiyu-dianying-tpl">
+            <div class="mod-flex_video mod-flex_video-vertical mt10">
+	<ul class="flex_video">
+	{{#list}}
+		<li class="{{selected}}" tvid="{{album_tvid}}">
+		    <div class="flex_video_thumb">
+		        <a style="background-image:url({{album_pic_url}})" class="flex_video_link" href="javascript:void(0){{album_play_url}}" {{#delegate}}{{delegate}}{{/delegate}}{{^delegate}}data-delegate="go"{{/delegate}} data-tvid="{{album_tvid}}" data-vid="{{album_vid}}" data-page-tmplid="play" data-albumid="{{albumId}}" data-pingback="qiyu">
+		            
+		        </a>
+		    </div>
+		    <div class="flex_video_data">
+		        <div class="data_title">
+		            <a href="javascript:void(0){{album_play_url}}" data-delegate="go" data-page-tmplid="play" data-albumid="{{albumId}}" data-tvid="{{album_tvid}}">{{_subTitle}}</a>
+		        </div>
+		        <div class="data_des">
+		            <a href="javascript:void(0){{album_play_url}}" data-delegate="go" data-page-tmplid="play" data-albumid="{{albumId}}" data-tvid="{{album_tvid}}">{{album_focus}}</a>
+		        </div>
+		    </div>
+		</li>
+	{{/list}}
+	</ul>
+</div>        </script>
+        <script id="play-info-tpl" type="text/play-info-tpl">
+            <div class="media_play_show">  
+    <div class="media_play"> 
+        <h1 class="media_play_title" id="videoname" data-elem="videoname">{{_subn}}</h1> 
+        {{#isUpdateComplate}}
+            {{#bossMixer}}
+                {{#updateStrategy}}<div class="media_play_des">更新:{{updateStrategy}}</div>{{/updateStrategy}}
+            {{/bossMixer}}
+            {{^bossMixer}}
+                {{#sets}}<div class="media_play_des">更新:{{sets}}集全</div>{{/sets}}
+            {{/bossMixer}}
+        {{/isUpdateComplate}}
+        {{^isUpdateComplate}}
+            {{#updateStrategy}}<div class="media_play_des">更新:{{updateStrategy}}</div>{{/updateStrategy}}
+        {{/isUpdateComplate}}
+        <div class="media_times">
+            <div>
+                <span class="dib-vm">
+                    <i class="ff-icon ff-playNum"></i>
+                    <em data-widget-pageinfo="counts" class="num"></em>
+                </span>
+                <span class="dib-vm" data-delegate="upDown-up">
+                    <i class="ff-icon ff-voteUp"></i>
+                    <em data-widget-pageinfo="updown-up" class="num"></em>
+                </span>
+                <span class="dib-vm" data-delegate="upDown-down">
+                    <i class="ff-icon ff-voteDown"></i>
+                    <em data-widget-pageinfo="updown-down" class="num"></em> 
+                </span>
+            </div>
+        </div>  
+    </div>
+    <div class="media_play_right">  
+        <a href="javascript:void(0)javascript:void(0);" data-delegate="more" class="media_play_btn" sign="close">  
+            <i class="ff-icon ff-arrowDown"></i>  
+        </a>  
+    </div>  
+</div>  
+<div class="media_play_hide" data-widget-pageinfo="morecon" style="display:none;">  
+    <div class="mod-mediaPlay_digital" id="percent_content">  
+        <div class="play-digital">
+            {{#isShowQixi}}
+            <a href="javascript:void(0)http://index.iqiyi.com/qixi/index.html" target="_blank">
+                <div class="hot_map_into">
+                    快去看看谁在和你一起看视频吧！
+                </div>
+            </a>
+            {{/isShowQixi}}
+            <div class="play-digital_nums">播放量数据：</div>
+            <div class="play-digital_c clearfix">  
+                <div class="mobile-lt">  
+                    <div class="mobile-info">移动占比</div>  
+                    <div class="mobile-num" id="percent_m">%</div>  
+                </div>  
+                <div class="highcharts-container">  
+                    <canvas id="percent_canvas" width="60" height="60">  
+                    </canvas> 
+                </div>  
+                <div class="mobile-rt">  
+                    <div class="mobile-info">PC占比</div>  
+                    <div class="mobile-num" id="percent_pc">%</div>  
+                </div>  
+            </div>  
+            <div class="play-digital_source" id="percent_tip">注：数据来自 平台</div>  
+        </div>  
+    </div>  
+    <div class="mod-mediaPlay_info">  
+        {{#tags}}<p>{{tags}}</p>{{/tags}}
+        {{#desc}}<p>{{desc}}</p>{{/desc}}
+    </div>  
+</div>
+{{! isUploadVideo 判断是否显示订阅的字段由 isUploadVideo 改为 userId}}
+{{#userId}}
+    <div class="personal_media_times">   
+        <p>  
+            <a href="javascript:void(0)/u/{{userId}}/v" class="green personal_link">
+                <i class="ff-icon ff-user"></i>
+                <span>{{userName}}</span>
+                {{#userIsVip}}
+                    <i class="icon icon-vip_confirm"></i>
+                {{/userIsVip}}
+            </a>  
+        </p>  
+        <p>  
+            <span>  
+                {{userVideoCount}}个视频
+            </span>
+            •
+            <span>
+                {{followerCount}}人已订阅
+            </span> 
+        </p>
+        <a href="javascript:void(0)javascript:void(0)" data-un="{{userName}}" data-issubscript="{{#isSubscript}}true{{/isSubscript}}{{^isSubscript}}false{{/isSubscript}}" data-delegate="subscript"
+            data-uid="{{userId}}" class="btn {{#isSubscript}}btn-cared{{/isSubscript}}{{^isSubscript}}btn-care{{/isSubscript}}" data-component="page.play.component.playPageInfo.Subscription">
+            <span data-node="subscriptText" data-subscript="text" class="{{#isSubscript}}cared{{/isSubscript}}{{^isSubscript}}care{{/isSubscript}}">
+                {{#isSubscript}}已订阅{{/isSubscript}}
+                {{^isSubscript}}+ 订阅{{/isSubscript}}
+            </span>                                                   
+        </a>
+    </div>
+{{/userId}}        </script>
+        <!-- 播放页添加到桌面气泡 -->
+        <!--对话框-->
+<section>
+    <div data-dialog="con" style="display:none;" data-component="common.component.dialog.PopupDialog">
+        <div class="cover"></div>
+        <div data-node="dialog_con" class="mod-pop" data-dialog="dialog_con">
+            <h3 data-node="title_con" data-dialog="title_con" class="pop_hd">
+                <i class="ff-icon ff-alter_success"></i>
+                <span data-node="title" data-dialog="title">订阅成功！</span>
+            </h3>
+            <div class="pop_bd">
+                <p data-node="tip" data-dialog="tip" class="fs12">您可以进入“我的&gt;空间&gt;订阅更新”中查看所有订阅列表。</p>
+            </div>
+            <div class="pop_ft">
+                <a data-node="option_btn_1" data-dialog="btn1" href="javascript:void(0)javascript:void(0)" class="green">知道了</a>
+                <a data-node="option_btn_2" data-dialog="btn2" href="javascript:void(0)javascript:void(0)" class="green">订阅更新</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!--对话框-->        <div id="addtohome" class="mod-addToScreen" style="display:none">
+    <div class="dib-vm mr5 mt5">
+        <i class="addDesk_logo"></i>
+    </div>
+    <div class="dib-vm">
+        <div>
+            <span class="desc">先点击</span>
+            <i id="icon-addtohome" class="ff-icon ff-addDesk-ios6"></i>
+        </div>
+        <div class="desc">再添加到主屏幕</div>
+        <div class="desc">随时打开看视频</div>
+    </div>
+    <div class="btn-wrap"><i class="closeBtn" id="closeit">×</i></div>
+    <div class="tip-arrow"></div>
+    <div class="tip-arrow-inner"></div>
+</div>        
+<div id="bottomNativePopup" class="mod-appBar dn" data-component="page.play.component.bottomNativePopup">
+    <div class="appBar">
+        <a data-node="close" class="appBar_close" id="closeit">
+            <i class="ff-icon ff-close"></i> 
+        </a> 
+        <a class="appBar_link"
+           href="javascript:void(0)javascript:void(0)"
+           data-download-pos="play_nativeapp_down"
+           data-rseat="mcltdown_8dbfc" data-download-rseat="603091_7"
+           data-type="qiyimobile130930_dwnld" 
+           data-delegate="downapp" 
+           data-download-flag="true" data-component="common.component.downLink.downLink">
+            <div class="appBar_icon">
+                <img width="44" height="44" src="http://www.qiyipic.com/common/fix/h5_white_images/iqiyi.png">
+            </div>
+            <div class="appBar_wording">
+                <p class="app_title">上客户端看</p>
+                <p class="app_des">更高清 更流畅！</p>
+            </div>
+            <div class="appBar_btn">
+                <span class="btn btn-primary">立即下载</span>
+            </div>
+        </a>
+    </div>
+</div >        <!-- 内容 结束 -->
+        <!-- 底部 开始 -->
+        <footer class="mod-footer">
+    <div class="tc mb25">
+        <!-- <a href="javascript:void(0)http://www.iqiyi.com/?src=fromhtml5bottempc" data-elem="pc" title="pc版" data-component="common.component.base.PcLink"><i class="icon-1x icon-2x icon_pc mr5"></i><span class="vl">pc版</span></a> -->
+    </div>
+    <!-- 根据需求，去掉h5通用底部的这些信息-->
+    <!--<div class="footer_links mb25">
+        <span><a href="javascript:void(0)http://www.iqiyi.com/common/aboutus.html">公司介绍</a></span>
+        <span><a href="javascript:void(0)http://www.iqiyi.com/common/news.html">新闻动态</a></span>
+        <span><a href="javascript:void(0)http://www.iqiyi.com/common/contactus.html">联系方式</a></span>
+        <span><a href="javascript:void(0)http://www.iqiyi.com/common/employ.html">招聘英才</a></span>
+        <span><a href="javascript:void(0)http://www.iqiyi.com/common/helpandsuggest.html?entry=yedi">帮助与反馈</a></span>
+        <span><a href="javascript:void(0)http://www.iqiyi.com/common/20100420/n4813.html">about us</a></span>
+    </div>-->
+    <div class="footer_cr">
+        <p>悦享品质 Always Fun，Always Fine</p>
+        <p>爱奇艺  &copy;2015 iQIYI.COM</p>
+    </div>
+</footer>
+        <div id="sideBar" class="mod-sideBar" data-component="common.component.base.ToTop">
+    <a data-node="scrollBtn" href="javascript:void(0)javascript:;" data-widget-totop="scroll" style="display:none;" class="goTop">
+        <i class="ff-icon ff-arrowUp"></i>
+        <span>顶部</span>
+    </a>
+     <!--vip 会员频道改版，将底部vip悬浮入口去掉  modified by  lihongquan 2015/04/28  product : wunan-->
+    <!-- <a href="javascript:void(0)/vip/" class="vip">
+        <i class="c_icon-vip">VIP</i>
+        <span>会员</span>
+    </a> -->	<a href="javascript:void(0)/feedback.html" data-delegate="go" data-page-tmplid="feedback" class="feedBack">
+		<i class="ff-icon ff-feedBack"></i>
+		<span>反馈</span>
+	</a>
+</div>        <div style="display:none;" data-widget-uc="handler" data-component="common.component.base.Uc">
+	<div class="addIndex clearfix" style="position:fixed;bottom:10px;">
+	  <div class="iqiyi"></div>
+	  <div class="add-text">添加“手机爱奇艺”到浏览 器首页，访问更方便 。</div>
+	  <div data-node="addBtn" class="add-btn" data-widget-uc="addtomarkbook">+ 添加</div>
+	  <div data-node="closeBtn" class="icon-1x icon-2x btn-close" data-widget-uc="closecontainer"></div>
+	</div>
+</div>
+
+<div data-node="addUcContainer" style="display:none;position:fixed;z-index:1011;left:50%;margin-left:-160px;" data-widget-uc="ucbookmark">
+	<iframe id="UCFrame" src="" style="border:0;min-height:160px;min-width:300px">
+    </iframe>
+</div>
+
+        <div class="cover dn" id="downloadTipCover"></div>
+        <script type="text/javascript">
+            (function (G,D,s,c,p) {
+	c = {
+		UA:"UA-iqiyi-000008",
+		NO_FLS:0, 
+		WITH_REF:1, 
+		URL:'http://static.qiyi.com/js/pingback/iwt-min.js'
+	};
+	G._iwt?G._iwt.track(c,p):(G._iwtTQ=G._iwtTQ || []).push([c,p]),!G._iwtLoading && lo();
+	function lo(t) {
+		G._iwtLoading=1;s=D.createElement("script");s.src=c.URL;
+		t=D.getElementsByTagName("script");t=t[t.length-1];
+		t.parentNode.insertBefore(s,t);
+	}
+})(this,document);        </script>
+        <noscript><img src="http://b.scorecardresearch.com/p?c1=2&c2=7290408&cv=2.0&cj=1"/>
+        </noscript>
+        <!-- 底部 结束 -->
+        <div data-node="weixin_pointer_mask" class="weixin_click" style="display:none"></div>
+        <div data-node="weixin_share_mask" class="cover" style="display:none;"></div>
+    </body>
+</html>
