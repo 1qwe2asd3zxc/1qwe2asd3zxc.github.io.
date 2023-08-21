@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" /> 
+  <meta name="format-detection" content="telephone=no" /> 
+  <title>{$obj.vod_name}_{$maccms.site_name}</title> 
+  <meta name="description" content="{$obj.vod_name} - 高清视频在线观看 - {$maccms.site_name}" /> 
+  <meta name="keywords" content="{$obj.vod_name} - 高清视频在线观看 - {$maccms.site_name}" />
+  <link rel="stylesheet" href="{$maccms.path}static/css/video-js.min.css" /> 
+  {include file="public/include"}
+  <style>
+    .pay_list{margin:20px auto 30px;overflow: hidden}
+	.pay_list label{position:relative;float:left;width:24%;height:100px;margin-right:1.33%;padding:20px 0 0 17px;border:1px solid #ff9c1e;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+	.pay_list label:last-child{margin-right:0;}
+	.pay_list b{font-size:16px;color:#fff}
+	.js-custom-form label p{color:#ccc;font-size:12px;padding-top:10px}
+	.pay_list p span{color:#ff9c1e;font-weight:700}
+	span.price{position:absolute;top:15px;right:15px;color:#fff;font-size:20px}
+	.pay_list .price small{font-size:12px}
+	.btn-donation{right:15px;position:absolute;bottom:15px;color:#000;font-size:15px;background:#ff9c1e;padding:5px 10px;border-radius:2px;cursor:pointer}
+  
+  
+	/*弹出层*/
+	.mac_pop_bg,.mac_pop_msg_bg{position: fixed; z-index: 129; left: 0;top: 0; width: 100%; height: 100%; background: rgba(0,0,0,.2);}
+	.mac_pop,.mac_pop_msg { z-index:99999; display: none; min-height: 20px; max-height: 750px; position: fixed;  top: 0;  left: 0;  bottom: 0;  right: 0;  margin: auto;  padding: 25px;  z-index: 130;  border-radius: 8px;  background-color: #141414;  box-shadow: 0 3px 18px rgba(0, 0, 0, .5);}
+	
+	.mac_pop .pop_top{  height:40px;  width:100%;  border-bottom: 1px #E5E5E5 solid;}
+	.mac_pop .pop_top h2{  float: left; display:block;margin: 0;font-size: 18px;font-weight: normal;font-family:"microsoft yahei";}
+	.mac_pop span.pop_close{  float: right;width: 23px;height: 23px;font-size: 0;text-indent: 9999; cursor: pointer;  font-weight: bold; display:block;background: url("/static/images/home/background.png") -10px 0 no-repeat;}
+	
+	.mac_pop_msg .pop-msg{  text-align:center;  font-size: 14px;  }
+    .gbook_form .msg_cue{margin: 0 0 10px;}
+    .gbook_form .msg_code{margin-top:10px;}
+	.gbook_content {width: 100% !important;border: 1px #E5E5E5 solid;border-radius: 2px;padding: 10px 10px 0;color: #fafafa;box-sizing: border-box;}
+	.msg_code input{height: 30px;border: 1px solid #e5e5e5;border-radius: 3px;}
+	.mac_verify_img{pointer-events: unset !important;height: 30px;vertical-align: middle;}
+	.remaining-w.fr{float:right;}
+   
+    .mac_report .gbook_submit{background-color: #ff9c1d;border-radius: 30px;}
+	@media (max-width: 767px){.pay_list label{width:100%;margin-bottom:10px;}.mac_pop{width:95% !important;box-sizing: border-box;height: 360px !important;}.remaining-w.fr{float:initial;}.yp_wz .yp_nr .y_p,.MacPlayer{height:{$GLOBALS['config']['play']['heightmob']} !important;}}
+  </style>
+  <style>#playleft iframe{border: 0 !important;}.sp_cnt{max-width: 100%;}</style>
+ </head>
+ <body>
+  {include file="public/head"}
+  <div class="yp_wz container"> 
+   <div class="yp_pr">
+    <a href="/">主页</a> &gt; 
+    <a href="{:mac_url_type($obj.type_1)}">{$obj.type_1.type_name}</a> &gt; 
+    <a href="{:mac_url_type($obj.type)}">{$obj.type.type_name}</a>
+   </div> 
+   <div class="yp_bt"> 
+    <h1>{$obj.vod_name}</h1> 
+    <span>看不到播放按钮请刷新页面重试</span> 
+   </div> 
+   <div class="yp_nr"> 
+    {maccms:website order="desc" ids="17"}
+    <div class="g_g zb_gg">
+     <a href="{$vo.website_jumpurl}" target="_blank"><img class="lazy" src="{:mac_url_img($vo.website_logo)}" style="display: block;"></a>
+    </div> 
+    {/maccms:website}
+    <div class="y_p" style="height: {$GLOBALS['config']['play']['height']}"> 
+     {$player_data}
+	 {$player_js} 
+     <div class="t_s">
+      <a href="javascript:;" onclick="MAC.Gbook.Report('编号【{$obj.vod_id}】名称【{$obj.vod_name}】不能观看请检查修复，页面地址' + location.href)">看不了片反馈？</a>
+     </div> 
+     <div class="r_k">
+      <a href="javascript:void(0);" onclick="AddFavorite(document.title,location.href)" class="domainslogn_palyer">最新域名：</a>
+     </div> 
+     <div class="clear"></div> 
+    </div> 
+    {maccms:website order="desc" ids="18"}
+    <div class="g_g yb_gg">
+     <a href="{$vo.website_jumpurl}" target="_blank"><img class="lazy" src="{:mac_url_img($vo.website_logo)}" style="display: block;"></a>
+    </div> 
+    {/maccms:website}
+    <div class="clear"></div> 
+   </div> 
+  </div> 
+  <div class="pay_list container"> 
+   <div class="js-custom-form">
+    {volist name="group_list" id="vo"}
+    {if condition="$vo.group_id gt 2 && $vo.group_status eq 1"}
+    <label class="first">
+     <b>{$vo.group_name} 包天</b>
+     <p><span>一天体验看</span> 全站影片皆可无限体验</p>
+     <span class="price">{$vo.group_points_day/$GLOBALS['config']['pay']['scale']} <small>元</small></span>
+     <span class="btn-donation" {if condition="$GLOBALS['user']['group_id'] eq 1"} onclick="ts()" {else/} {if condition="$GLOBALS['config']['pay']['point_status'] eq '1' || $GLOBALS['config']['pay']['online_status'] eq '1'"} onclick="window.open('{:mac_url('user/upgrade')}','_blank');" {else/} onclick="window.open('{$GLOBALS['config']['pay']['card']['url']}','_blank');" {/if} {/if}>升级</span> 
+    </label>
+    <label class="">
+     <b>{$vo.group_name} 包月</b>
+     <p><span>一个月无限看</span> 一次缴一个月 懒人方案</p>
+     <span class="price">{$vo.group_points_month/$GLOBALS['config']['pay']['scale']} <small>元</small></span>
+     <span class="btn-donation" {if condition="$GLOBALS['user']['group_id'] eq 1"} onclick="ts()" {else/} {if condition="$GLOBALS['config']['pay']['point_status'] eq '1' || $GLOBALS['config']['pay']['online_status'] eq '1'"} onclick="window.open('{:mac_url('user/upgrade')}','_blank');" {else/} onclick="window.open('{$GLOBALS['config']['pay']['card']['url']}','_blank');" {/if} {/if}>升级</span> 
+    </label>
+    <label class="">
+     <b>{$vo.group_name} 包季</b>
+     <p><span>三个月无限看</span> 季度轻松缴 看片无负担</p>
+     <span class="price">{$vo.group_points_week/$GLOBALS['config']['pay']['scale']} <small>元</small></span>
+     <span class="btn-donation" {if condition="$GLOBALS['user']['group_id'] eq 1"} onclick="ts()" {else/} {if condition="$GLOBALS['config']['pay']['point_status'] eq '1' || $GLOBALS['config']['pay']['online_status'] eq '1'"} onclick="window.open('{:mac_url('user/upgrade')}','_blank');" {else/} onclick="window.open('{$GLOBALS['config']['pay']['card']['url']}','_blank');" {/if} {/if}>升级</span> 
+    </label>
+    <label class="">
+     <b>{$vo.group_name} 包年</b>
+     <p><span>一年无限看</span> 一年轻松缴 看片无负担</p>
+     <span class="price">{$vo.group_points_year/$GLOBALS['config']['pay']['scale']} <small>元</small></span>
+     <span class="btn-donation" {if condition="$GLOBALS['user']['group_id'] eq 1"} onclick="ts()" {else/} {if condition="$GLOBALS['config']['pay']['point_status'] eq '1' || $GLOBALS['config']['pay']['online_status'] eq '1'"} onclick="window.open('{:mac_url('user/upgrade')}','_blank');" {else/} onclick="window.open('{$GLOBALS['config']['pay']['card']['url']}','_blank');" {/if} {/if}>升级</span> 
+    </label>
+    {/if}
+    {/volist} 
+   </div>
+  </div>
+  <div class="sp_kj container"> 
+   <div class="x_z">
+    <a href="{$obj.vod_down_url}" target="_blank" rel="noopener noreferrer"><img src="{$maccms.path}static/img/a5.png" />视频下载</a>
+   </div> 
+   <div class="f_x"> 
+    <i>本页网址</i> 
+    <span id="page_target" style="overflow:hidden;"></span> 
+    <button type="button" data-clipboard-action="copy" data-clipboard-target="#page_target" id="copy_page_btn">复制分享</button> 
+    <div class="clear"></div> 
+   </div> 
+   <div class="x_z">
+    <a class="app_link" href="{$GLOBALS['config']['extra']['appdown']}" target="_blank" rel="noopener noreferrer"><img src="{$maccms.path}static/img/a7.png" />APP下载</a>
+   </div> 
+   <div class="x_z m_n">
+    <a class="help_link" onclick="sc()" style="cursor: pointer;" rel="noopener noreferrer"><img src="{$maccms.path}static/img/a10.png" style="margin-top: -3px;" />视频收藏</a>
+   </div> 
+   <div class="clear"></div> 
+  </div> 
+  <div class="gd_bq container"> 
+   <div class="gy_bt"> 
+    <div class="l_m p_n">
+     标签
+    </div> 
+    <div class="clear"></div> 
+   </div> 
+   <div class="b_q"> 
+	{notempty name="$obj.vod_tag"}{$obj.vod_tag|mac_url_create='tag'}{/notempty}
+    <div class="clear"></div> 
+    <div class="sp_cnt" style="width:100%;margin:0 auto;">
+     {$obj.vod_content}
+    </div> 
+    <div class="clear"></div> 
+   </div> 
+   <div class="g_d">
+    <span class="z_k">展开查看更多</span>
+    <span class="s_q">收起查看内容</span>
+   </div> 
+  </div> 
+  {maccms:website order="desc" ids="16"}
+  <div class="head_gg center container">
+   <a href="{$vo.website_jumpurl}" target="_blank"><img class="lazy" src="{:mac_url_img($vo.website_logo)}" style="display: block;"></a>
+  </div> 
+  {/maccms:website}
+  <div class="sy_yp container"> 
+   <div class="gy_bt"> 
+	{maccms:type order="asc" by="sort" ids="'.$obj['type_id_1'].'"}
+    <div class="l_m p_n">
+     口味推荐
+    </div> 
+    <div class="z_y"> 
+     <div class="more_btn"> 
+      <a href="{:mac_url_type($vo)}" class="gd_lm">更多视频</a> 
+     </div> 
+    </div> 
+    <a href="{:mac_url_type($vo)}" class="fy_lm"><img src="{$maccms.path}static/img/fy.png" /></a> 
+    <div class="clear"></div> 
+	{/maccms:type}
+   </div> 
+   <div class="yp_nr l_b"> 
+    <ul> 
+	{maccms:vod order="desc" by="rnd" num="8"}	
+     <li> 
+      <div class="t_p">
+       <a href="{:mac_url_vod_play($vo)}" target="_blank" rel="noopener noreferrer"><img class="lazy" data-original="{:mac_url_img($vo.vod_pic)}" src="{$maccms.path}static/img/lazylitpic.gif" /></a>
+       {notempty name="$vo.vod_duration"}<span>{$vo.vod_duration}</span>{/notempty}
+      </div> 
+      <div class="w_z"> 
+       <h3><a href="{:mac_url_vod_play($vo)}" target="_blank" rel="noopener noreferrer">{$vo.vod_name}</a></h3> 
+       <span>{$vo.vod_time|date="Y-m-d",###}</span> 
+      </div> 
+      <div class="clear"></div> </li> 
+	{/maccms:vod}
+    </ul> 
+    <div class="clear"></div> 
+   </div> 
+  </div> 
+  {maccms:website order="desc" ids="15"}
+  <div class="head_gg bottom container">
+   <a href="{$vo.website_jumpurl}" target="_blank"><img class="lazy" src="{:mac_url_img($vo.website_logo)}" style="display: block;"></a>
+  </div> 
+  {/maccms:website}
+  <div class="yp_ts container"> 
+   <div class="w_z"> 
+    <p>注：部分地区及运营商会暂时或长久屏蔽8X播放线路，造成无法播放敬请谅解，我们会及时处理敬请耐心等候 特别提醒：我们永久提倡保护未成年人，强烈谴责虐童以及儿童性侵，杜绝此类影片传播</p> 
+    <h3>若你未满18周岁，请立即关闭离开！</h3> 
+   </div> 
+  </div>
+  <span style="display:none" class="mac_ulog_set" alt="设置播放页浏览记录" data-type="4" data-mid="{$maccms.mid}" data-id="{$obj.vod_id}" data-sid="{$param.sid}" data-nid="{$param.nid}"></span>
+  {include file="public/foot"}
+  <script type="text/javascript" src="{$maccms.path}static/js/main.js"></script> 
+  <div class="kj_dh"> 
+   <ul> 
+    <li><a href="javascript:;" class="f_h">返回顶部</a></li> 
+   </ul> 
+  </div> 
+  <script>
+    $(".menu li:eq(1)").removeClass();
+    $(".menu li:eq(2)").toggleClass("on");
+  </script> 
+  <script>
+	function sc(){
+		$.get("/index.php/user/ajax_ulog/?ac=set&mid=1&id={$obj.vod_id}&type=2",function(data){
+			if(data.msg=="获取成功"){
+				alert("您已收藏过该视频,无需重复收藏！");
+			}else{
+				alert(data.msg);
+			}
+		},"json");
+	}
+  </script>
+  {if condition="$GLOBALS['user']['group_id'] eq 1"}
+  <script>
+	function ts(){
+		alert("未登录");
+	}
+  </script> 
+  {/if}
+ </body>
+</html>
