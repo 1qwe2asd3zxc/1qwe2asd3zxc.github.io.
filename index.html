@@ -1,41 +1,171 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>专题首页 - 精品专题 - 推荐专题 - {$maccms.site_name}</title>
-    <meta name="keywords" content="电影专题,电视剧专题,综艺专题,动漫专题,推荐专题,专题收录" />
-    <meta name="description" content="本站提供最新最全精品专题数据" />
-    {include file="public/include"}
-</head>
-<body>
-{include file="public/head"}
-<!--当前位置-->
-<div class="bread-crumb-nav fn-clear">
-    <ul class="bread-crumbs">
-        <li class="home"><a href="{$maccms.path}">首页</a></li>
-        <li>影视专题</li>
-        <li class="back"><a href="javascript:MAC.GoBack()">返回上一页</a></li>
-    </ul>
-</div>
-<!--专题-->
-<div class="ui-box ui-qire fn-clear" id="list-focus">
-    <ul class="zhuanti-list">
-        {maccms:topic num="5" paging="yes" order="desc" by="time"}
-        <li><a class="play-img" href="{:mac_url_topic_detail($vo)}"><img src="{$vo.topic_pic|mac_url_img}" alt="{$vo.topic_name}" /></a>
-            <div class="play-txt">
-                <h2><a href="{:mac_url_topic_detail($vo)}">{$vo.topic_name}({$vo.topic_rel_vod|explode=',',###|count})</a></h2>
-                <p class="juqing">专题介绍：{$vo.topic_blurb}……<a class="link detail-desc" href="{:mac_url_topic_detail($vo)}">【详细剧情】</a></p>
-            </div>
-        </li>
-        {/maccms:topic}
-    </ul>
-    <div class="ui-bar list-page fn-clear">
-        {include file="public/paging"}
-    </div>
-
-</div>
-
-{include file="public/foot"}
-</body>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" /> 
+  <meta name="format-detection" content="telephone=no" /> 
+  <title>个人中心 - {$maccms.site_name}</title> 
+  <meta name="keywords" content="个人中心,{$maccms.site_keywords}" /> 
+  <meta name="description" content="{$maccms.site_description}" />
+  {include file="user/include"}
+ </head>
+ <body class="fed-min-width">
+  {include file="user/head"}
+  <div class="fed-main-info fed-min-width"> 
+   <div class="fed-part-case"> 
+    <div class="fed-user-head fed-margin-top fed-back-whits"> 
+     <div class="fed-list-pics fed-lazy fed-part-5by2 fed-part-rows" style="background:url({$maccms.path}static/images/user.jpg);"> 
+      <div class="fed-part-core fed-text-center"> 
+       <div class="fed-user-image" data-role="{:mac_url('user/portrait')}"> 
+        <img class="face fed-user-avat fed-part-roun" src="{$obj.user_portrait|mac_default='static/images/touxiang.png'|mac_url_img}?v={:time()}" /> 
+       </div> 
+       <span class="fed-visible fed-text-white fed-padding">{$obj.user_name}</span> 
+      </div> 
+     </div> 
+     <div class="fed-padding fed-part-rows fed-back-whits fed-hide-md"> 
+      <ul class="fed-user-brief fed-part-rows fed-back-whits"> 
+       <li class="fed-padding-x fed-text-center fed-col-xs4"> <span class="fed-visible fed-text-gules">{$obj.user_points}</span> <span class="fed-visible">我的积分</span> </li> 
+       <li class="fed-padding-x fed-text-center fed-line-left fed-col-xs4"> <span class="fed-visible fed-text-gules">{$obj.group.group_name}</span> <span class="fed-visible">我的等级</span> </li> 
+       <li class="fed-padding-x fed-text-center fed-line-left fed-col-xs4"> <span class="fed-visible fed-text-gules">{$obj.user_login_num}</span> <span class="fed-visible">登录次数</span> </li> 
+      </ul> 
+     </div> 
+    </div> 
+    <div class="fed-part-rows"> 
+     <div class="fed-main-left fed-col-xs12 fed-col-md4 fed-col-lg3 fed-hide-sm fed-show-md-block">
+       {include file="user/menu"} 
+     </div> 
+     <div class="fed-main-right fed-col-xs12 fed-col-md8 fed-col-lg9 fed-hide-xs fed-hide-sm fed-show-md-block"> 
+      <div class="fed-part-layout fed-back-whits"> 
+       <div class="fed-user-title fed-list-head fed-part-rows fed-padding fed-line-bottom"> 
+        <h2 class="fed-font-xvi fed-padding">我的资料</h2> 
+        <ul class="fed-part-tips fed-padding"> 
+         <li class="fed-padding"> <a class="fed-more" href="{:mac_url('user/index')}">刷新</a> </li> 
+        </ul> 
+       </div> 
+       <ul class="fed-user-list fed-part-rows fed-back-whits"> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">用户名</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_name}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">所属会员组</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.group.group_name}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">到期时间</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_end_time|mac_day|mac_default='无限期'}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">账户积分</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_points}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">QQ号码</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_qq|mac_default='未填写'}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">邮件地址</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_email|mac_default='未填写'}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">联系手机</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_phone|mac_default='未填写'}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">注册时间</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_reg_time|mac_day|mac_default='未知'}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">登录时间</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_login_time|mac_day}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">登录IP</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_login_ip|long2ip}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">登录次数</span> 
+          <span class="fed-col-xs7 fed-col-sm8 fed-part-eone">{$obj.user_login_num}</span> 
+          <span class="fed-col-xs1 fed-col-sm1 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+         </div> </li> 
+		{if $GLOBALS['config']['user']['invite_reg_points'] egt 0}
+        <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">推广注册链接</span> 
+          <span class="fed-col-xs6 fed-col-sm8 fed-part-eone"><input id="url" class="fed-visible" value="{$maccms.http_type}{$maccms.site_url}{:mac_url('user/reg')}?uid={$obj.user_id}" onmouseover="this.select();" readonly="readonly"/></span> 
+          <span class="fed-col-xs2 fed-col-sm1 fed-part-eone fed-text-right" style="cursor:pointer;color:#ff9c1d;" onclick="copyUrl()">复制</span> 
+         </div> </li> 
+		{/if}
+		{if $GLOBALS['config']['user']['invite_visit_points'] gt 0}
+		<li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+         <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+          <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">推广访问链接</span> 
+          <span class="fed-col-xs6 fed-col-sm8 fed-part-eone"><input id="url2" class="fed-visible" value="{$maccms.http_type}{$maccms.site_url}{:mac_url('user/visit')}?uid={$obj.user_id}" onmouseover="this.select();" readonly="readonly"/></span> 
+          <span class="fed-col-xs2 fed-col-sm1 fed-part-eone fed-text-right" style="cursor:pointer;color:#ff9c1d;" onclick="copyUrl2()">复制</span> 
+         </div> </li>
+		{/if} 
+       </ul> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  {include file="user/foot"}
+  <script>
+	function copyUrl() {
+		var Url = document.getElementById("url");
+		Url.select(); /*选择对象*/ 
+		document.execCommand("Copy"); /*执行浏览器复制命令*/ 
+		alert("你的推广地址已复制，用 Ctrl+V 粘贴到浏览器打开链接");
+	}
+	
+	function copyUrl2() {
+		var Url = document.getElementById("url2");
+		Url.select(); /*选择对象*/ 
+		document.execCommand("Copy"); /*执行浏览器复制命令*/ 
+		alert("你的推广地址已复制，用 Ctrl+V 粘贴到浏览器打开链接");
+	}
+  
+	$(".face").imageUpload({
+		formAction: "{:mac_url('user/portrait')}",
+		inputFileName:'file',
+		browseButtonValue: '',
+		browseButtonClass:'btn btn-default btn-xs fed-user-alter fed-part-roun fed-icon-font fed-icon-xiugai',
+		automaticUpload: true,
+		hideDeleteButton: true,
+		hover:true
+	})
+	$(".jQuery-image-upload-controls").mouseenter(function(){
+    $(".jQuery-image-upload-controls").css("display","block");
+	});
+	$(".jQuery-image-upload-controls").mouseleave(function(){
+    $(".jQuery-image-upload-controls").css("display","none");
+	});
+	$(".face").on("imageUpload.uploadFailed", function (ev, err) {
+		alert(err);
+	});
+</script>  
+ </body>
 </html>
-
