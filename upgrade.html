@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" /> 
+  <meta name="format-detection" content="telephone=no" /> 
+  <title>升级会员组 - {$maccms.site_name}</title> 
+  <meta name="keywords" content="升级会员组,{$maccms.site_keywords}" /> 
+  <meta name="description" content="{$maccms.site_description}" /> 
+  {include file="user/include"}
+ </head>
+ <body class="fed-min-width">
+   {include file="user/head"}   
+  <div class="fed-main-info fed-min-width"> 
+   <div class="fed-part-case"> 
+    <div class="fed-user-head fed-margin-top fed-back-whits"> 
+     <div class="fed-list-pics fed-lazy fed-part-5by2 fed-part-rows" style="background:url({$maccms.path}static/images/user.jpg);"> 
+      <div class="fed-part-core fed-text-center"> 
+       <div class="fed-user-image" data-role="{:mac_url('user/portrait')}"> 
+        <img class="face fed-user-avat fed-part-roun" src="{$obj.user_portrait|mac_default='static/images/touxiang.png'|mac_url_img}?v={:time()}" /> 
+       </div> 
+       <span class="fed-visible fed-text-white fed-padding">{$obj.user_name}</span> 
+      </div> 
+     </div> 
+     <div class="fed-padding fed-part-rows fed-back-whits fed-hide-md"> 
+      <ul class="fed-user-brief fed-part-rows fed-back-whits"> 
+       <li class="fed-padding-x fed-text-center fed-col-xs4"> <span class="fed-visible fed-text-gules">{$obj.user_points}</span> <span class="fed-visible">我的积分</span> </li> 
+       <li class="fed-padding-x fed-text-center fed-line-left fed-col-xs4"> <span class="fed-visible fed-text-gules">{$obj.group.group_name}</span> <span class="fed-visible">我的等级</span> </li> 
+       <li class="fed-padding-x fed-text-center fed-line-left fed-col-xs4"> <span class="fed-visible fed-text-gules">{$obj.user_login_num}</span> <span class="fed-visible">登录次数</span> </li> 
+      </ul> 
+     </div> 
+    </div> 
+    <div class="fed-part-rows"> 
+     <div class="fed-main-left fed-col-xs12 fed-col-md4 fed-col-lg3 fed-hide-xs fed-hide-sm fed-show-md-block">
+       {include file="user/menu"} 
+     </div> 
+     <div class="fed-main-right fed-col-xs12 fed-col-md8 fed-col-lg9"> 
+      <div class="fed-part-layout fed-back-whits"> 
+       <div class="fed-user-title fed-list-head fed-part-rows fed-padding fed-line-bottom"> 
+        <h2 class="fed-font-xvi fed-padding">升级会员</h2> 
+        <ul class="fed-part-tips fed-padding"> 
+         <li class="fed-padding"> <a class="fed-more" href="{:mac_url('user/index')}">返回</a> </li> 
+        </ul> 
+       </div> 
+        <ul class="fed-user-list fed-part-rows fed-back-whits">
+        {if condition="$GLOBALS['config']['pay']['point_status'] eq 1"}
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">充值金额</span> 
+           <span class="fed-col-xs7 fed-col-sm6 fed-part-eone"><input type="text" name="price" value="{$GLOBALS['config']['pay']['min']}" placeholder="充值金额" /></span> 
+           <span class="fed-col-xs1 fed-col-sm3 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs12 fed-part-eone">友情提示：最小充值金额为{$GLOBALS['config']['pay']['min']}元，1元={$GLOBALS['config']['pay']['scale']}积分</span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows"> <span class="fed-col-xs4 fed-col-sm3 fed-part-eone fed-hide-xs">&nbsp;</span> <input class="fed-subm-price fed-col-xs7 fed-col-sm6 fed-rims-info fed-btns-info fed-btns-green fed-col-xs12" type="button" id="btn_submit_pay" value="确认" /> </li> 
+         <h2 class="fed-font-xvi fed-padding-x fed-padding">积分兑换</h2> 
+         <form class="fed-user-form fed-user-info fed-part-rows" method="post"> 
+         <li class="fed-padding-x fed-part-rows fed-line-top fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">所属会员组</span> 
+           <span class="fed-col-xs6 fed-col-sm6 fed-part-eone">{$obj.group.group_name}</span> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">升级会员组</span> 
+           <span class="fed-col-xs6 fed-col-sm6 fed-part-eone">选择以下进行兑换升级</span> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+          </div> </li> 
+          {volist name="group_list" id="vo"}
+          {if condition="$vo.group_id gt 2 && $vo.group_status eq 1"}
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_day}" data-long="day" style="cursor:pointer;">{$vo.group_name}-包天：{$vo.group_points_day}积分</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_day}" data-long="day" style="cursor:pointer;color:#ff9c1d !important;">兑换</a></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_month}" data-long="month" style="cursor:pointer;">{$vo.group_name}-包月：{$vo.group_points_month}积分</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_month}" data-long="month" style="cursor:pointer;color:#ff9c1d !important;">兑换</a></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_week}" data-long="week" style="cursor:pointer;">{$vo.group_name}-包季：{$vo.group_points_week}积分</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_week}" data-long="week" style="cursor:pointer;color:#ff9c1d !important;">兑换</a></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_year}" data-long="year" style="cursor:pointer;">{$vo.group_name}-包年：{$vo.group_points_year}积分</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_point" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_year}" data-long="year" style="cursor:pointer;color:#ff9c1d !important;">兑换</a></span> 
+          </div> </li> 
+          {/if}
+          {/volist} 
+         </form> 
+         <li class="fed-padding-x fed-part-rows fed-line-top"></li>
+        {/if}
+        {if condition="$GLOBALS['config']['pay']['online_status'] eq 1"}
+         <h2 class="fed-font-xvi fed-padding-x fed-padding">在线购买</h2> 
+         <form class="fed-user-form fed-user-info fed-part-rows" method="post"> 
+         <li class="fed-padding-x fed-part-rows fed-line-top fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">所属会员组</span> 
+           <span class="fed-col-xs6 fed-col-sm6 fed-part-eone">{$obj.group.group_name}</span> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">升级会员组</span> 
+           <span class="fed-col-xs6 fed-col-sm6 fed-part-eone">选择以下进行购买升级</span> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><i class="fed-icon-font fed-icon-you"></i></span> 
+          </div> </li> 
+          {volist name="group_list" id="vo"}
+          {if condition="$vo.group_id gt 2 && $vo.group_status eq 1"}
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_day/$GLOBALS['config']['pay']['scale']}" data-long="day" style="cursor:pointer;">{$vo.group_name}-包天：{$vo.group_points_day/$GLOBALS['config']['pay']['scale']}元</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_day/$GLOBALS['config']['pay']['scale']}" data-long="day" style="cursor:pointer;color:#ff9c1d !important;">购买</a></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_month/$GLOBALS['config']['pay']['scale']}" data-long="month" style="cursor:pointer;">{$vo.group_name}-包月：{$vo.group_points_month/$GLOBALS['config']['pay']['scale']}元</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_month/$GLOBALS['config']['pay']['scale']}" data-long="month" style="cursor:pointer;color:#ff9c1d !important;">购买</a></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_week/$GLOBALS['config']['pay']['scale']}" data-long="week" style="cursor:pointer;">{$vo.group_name}-包季：{$vo.group_points_week/$GLOBALS['config']['pay']['scale']}元</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_week/$GLOBALS['config']['pay']['scale']}" data-long="week" style="cursor:pointer;color:#ff9c1d !important;">购买</a></span> 
+          </div> </li> 
+         <li class="fed-padding-x fed-part-rows fed-line-bottom"> 
+          <div class="fed-user-input fed-visible fed-font-xvi fed-part-rows"> 
+           <span class="fed-col-xs4 fed-col-sm3 fed-part-eone">{$vo.group_name}</span> 
+           <a class="fed-subm-group fed-col-xs6 fed-col-sm6 fed-part-eone grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_year/$GLOBALS['config']['pay']['scale']}" data-long="year" style="cursor:pointer;">{$vo.group_name}-包年：{$vo.group_points_year/$GLOBALS['config']['pay']['scale']}元</a> 
+           <span class="fed-col-xs2 fed-col-sm3 fed-part-eone fed-text-right"><a class="fed-text-gules grade_pay" data-id="{$vo.group_id}" data-name="{$vo.group_name}" data-points="{$vo.group_points_year/$GLOBALS['config']['pay']['scale']}" data-long="year" style="cursor:pointer;color:#ff9c1d !important;">购买</a></span> 
+          </div> </li> 
+          {/if}
+          {/volist} 
+         </form> 
+        {/if}
+        </ul> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  {include file="user/foot"}
+  {if condition="$GLOBALS['config']['pay']['point_status'] eq 1"}
+  <script>
+  
+	$('#btn_submit_pay').click(function(){
+		var that=$(this);
+		var price = $("input[name='price']").val();
+		if(Number(price)<1){
+			return;
+		}
+		if(confirm('确定要在线充值吗')) {
+			$.ajax({
+				url: "{:mac_url('user/buy')}",
+				type: "post",
+				dataType: "json",
+				data: {price: price,flag:'pay'},
+				beforeSend: function () {
+					$("#btn_submit_pay").val("loading...");
+				},
+				success: function (r) {
+					if (r.code == 1) {
+						location.href="{:mac_url('user/pay')}?order_code=" + r.data.order_code;
+					}
+					else{
+						alert(r.msg);
+					}
+				},
+				complete: function () {
+					$("#btn_submit_pay").val("提交");
+				}
+			});
+		}
+	});
+
+	$('.grade_point').click(function(){
+		var that=$(this);
+		var group_id = that.attr('data-id');
+		var group_name = that.attr('data-name');
+		var long = that.attr('data-long');
+		var points = that.attr('data-points');
+
+		if(confirm('确定要升级到【'+group_name+'】吗,需要花费【'+points+'】积分')) {
+			$.ajax({
+				url: "{:url('user/upgrade')}",
+				type: "post",
+				dataType: "json",
+				data: {group_id: group_id,long:long,points:points,flag:'point'},
+				beforeSend: function () {
+					$("#btn_submit").css("background","#fd6a6a").val("loading...");
+				},
+				success: function (r) {
+					alert(r.msg);
+					if (r.code == 1) {
+						location.reload();
+					}
+				},
+				complete: function () {
+					$("#btn_submit").css("background","#fa4646").val("提交");
+				}
+			});
+		}
+	});
+  </script> 
+  {/if}
+  {if condition="$GLOBALS['config']['pay']['online_status'] eq 1"}
+  <script>  
+	$('.grade_pay').click(function(){
+		var that=$(this);
+		var group_id = that.attr('data-id');
+		var group_name = that.attr('data-name');
+		var long = that.attr('data-long');
+		var points = that.attr('data-points');
+
+		if(confirm('确定要升级到【'+group_name+'】吗,需要花费【'+points+'】元')) {
+			$.ajax({
+				url: "{:url('user/upgrade')}",
+				type: "post",
+				dataType: "json",
+				data: {group_id: group_id,long:long },
+				beforeSend: function () {
+					$("#btn_submit").css("background","#fd6a6a").val("loading...");
+				},
+				success: function (r) {
+					if (r.code == 1) {
+                        location.href="{:url('user/pay')}?order_code=" + r.data.order_code;
+                    }
+                    else{
+                        alert(r.msg);
+                    }
+				},
+				complete: function () {
+					$("#btn_submit").css("background","#fa4646").val("提交");
+				}
+			});
+		}
+	});
+</script>  
+{/if}
+  <script>
+	$(".face").imageUpload({
+		formAction: "{:mac_url('user/portrait')}",
+		inputFileName:'file',
+		browseButtonValue: '',
+		browseButtonClass:'btn btn-default btn-xs fed-user-alter fed-part-roun fed-icon-font fed-icon-xiugai',
+		automaticUpload: true,
+		hideDeleteButton: true,
+		hover:true
+	})
+	$(".jQuery-image-upload-controls").mouseenter(function(){
+    $(".jQuery-image-upload-controls").css("display","block");
+	});
+	$(".jQuery-image-upload-controls").mouseleave(function(){
+    $(".jQuery-image-upload-controls").css("display","none");
+	});
+	$(".face").on("imageUpload.uploadFailed", function (ev, err) {
+		alert(err);
+	});
+</script>  
+ </body>
+</html>
