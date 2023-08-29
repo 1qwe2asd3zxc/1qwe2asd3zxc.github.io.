@@ -1,5 +1,5 @@
   <div class="footer"> 
-   <div class="container"> 
+   <div class="container">  
     <div class="ft_gg"> 
      <ul> 
       {maccms:website order="desc" ids="11"}
@@ -73,12 +73,20 @@
     </div> 
    </div> 
   </div> 
-  <script type="text/javascript" src="{$maccms.path}static/js/main.js"></script> 
-  <div class="kj_dh"> 
-   <ul> 
-    <li><a href="javascript:;" class="f_h">返回顶部</a></li> 
-   </ul> 
-  </div> 
+	{maccms:website order="desc" ids="20"}
+    <div class="navbar-fixed-bottom bottom_nav" id="ads_b">
+      <div class="bt-bar">
+        <div class="container_xf">
+          <div class="row" id="bottom_a">
+            <div class="telled">
+              <span class="ads-close"><a style="width:25px;height:25px;display:block;" onclick="document.getElementById('ads_b').style.display='none'" href="javascript:void(0);"></a></span>
+    		  <a href="{$vo.website_jumpurl}" target="_blank" rel="noopener noreferrer" class="tellpc" style="padding:11% 50%;background:url({:mac_url_img($vo.website_logo)}) no-repeat;background-size:contain;background-position:top;"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {/maccms:website}
   <div class="m-footer" style="display:none;">
     <a class="navFooter" target="_self" href="/"><i class="fed-icon-font fed-icon-shouye"></i>首页</a>
     <button type="button" class="navFooter show-sidebar-left"><i class="fed-icon-font fed-icon-fenlei"></i>分类</button>
@@ -86,3 +94,4 @@
     <a class="navFooter" target="_self" {if condition="$GLOBALS['user']['user_id']" gt 0} href="{:mac_url('user/index')}" {else/} href="{:mac_url('user/login')}" {/if}><i class="fed-icon-font fed-icon-yonghu"></i>我的</a>
   </div>
   {include file="public/popup"}
+  {$maccms.site_qj_ad}
